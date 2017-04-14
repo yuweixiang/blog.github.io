@@ -1,0 +1,1048 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java,ASM,JVM," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="什么是字节码？ 机器码机器码(machine code)是CPU可直接解读的指令。机器码与硬件等有关，不同的CPU架构支持的硬件码也不相同。  字节码字节码（bytecode）是一种包含执行程序、由一序列 op 代码/数据对 组成的二进制文件。字节码是一种中间码，它比机器码更抽象，需要直译器转译后才能成为机器码的中间代码。通常情况下它是已经经过编译，但与特定机器码无关。字节码主要为了实现特定软件运">
+<meta name="keywords" content="java,ASM,JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字节码及ASM使用">
+<meta property="og:url" content="http://www.timguan.net/2017/03/24/字节码及ASM使用/index.html">
+<meta property="og:site_name" content="答案在风中的博客">
+<meta property="og:description" content="什么是字节码？ 机器码机器码(machine code)是CPU可直接解读的指令。机器码与硬件等有关，不同的CPU架构支持的硬件码也不相同。  字节码字节码（bytecode）是一种包含执行程序、由一序列 op 代码/数据对 组成的二进制文件。字节码是一种中间码，它比机器码更抽象，需要直译器转译后才能成为机器码的中间代码。通常情况下它是已经经过编译，但与特定机器码无关。字节码主要为了实现特定软件运">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/字节码及ASM使用/img1.gif">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/字节码及ASM使用/img2.gif">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/字节码及ASM使用/img3.png">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/字节码及ASM使用/img4.png">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/字节码及ASM使用/img5.jpg">
+<meta property="og:updated_time" content="2017-04-09T06:33:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="字节码及ASM使用">
+<meta name="twitter:description" content="什么是字节码？ 机器码机器码(machine code)是CPU可直接解读的指令。机器码与硬件等有关，不同的CPU架构支持的硬件码也不相同。  字节码字节码（bytecode）是一种包含执行程序、由一序列 op 代码/数据对 组成的二进制文件。字节码是一种中间码，它比机器码更抽象，需要直译器转译后才能成为机器码的中间代码。通常情况下它是已经经过编译，但与特定机器码无关。字节码主要为了实现特定软件运">
+<meta name="twitter:image" content="http://www.timguan.net/2017/03/24/字节码及ASM使用/img1.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7HAIUMNUNC',
+      apiKey: '323ef222dba6ce48bd6f811f277ea482',
+      indexName: 'index of blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.timguan.net/2017/03/24/字节码及ASM使用/"/>
+
+
+
+
+
+  <title> 字节码及ASM使用 | 答案在风中的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">答案在风中的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">blowing in the wind</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.timguan.net/2017/03/24/字节码及ASM使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="答案在风中">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="答案在风中的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                字节码及ASM使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-24T12:47:19+08:00">
+                2017-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/03/24/字节码及ASM使用/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/24/字节码及ASM使用/" class="leancloud_visitors" data-flag-title="字节码及ASM使用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是字节码？"><a href="#什么是字节码？" class="headerlink" title="什么是字节码？"></a>什么是字节码？</h2><ul>
+<li><p>机器码<br>机器码(machine code)是CPU可直接解读的指令。机器码与硬件等有关，不同的CPU架构支持的硬件码也不相同。</p>
+</li>
+<li><p>字节码<br>字节码（bytecode）是一种包含执行程序、由一序列 op 代码/数据对 组成的二进制文件。字节码是一种中间码，它比机器码更抽象，需要直译器转译后才能成为机器码的中间代码。通常情况下它是已经经过编译，但与特定机器码无关。字节码主要为了实现特定软件运行和软件环境、与硬件环境无关。<br>字节码的实现方式是通过编译器和虚拟机器。编译器将源码编译成字节码，特定平台上的虚拟机器将字节码转译为可以直接执行的指令。<br>例如:C# IL,Java bytecode</p>
+<ul>
+<li>JAVA代码编译和执行<br>Java 代码编译是由 Java 源码编译器来完成，流程图如下所示：<img src="/2017/03/24/字节码及ASM使用/img1.gif" alt="img1.gif" title="">
+Java 字节码的执行是由 JVM 执行引擎来完成，流程图如下所示：<img src="/2017/03/24/字节码及ASM使用/img2.gif" alt="img2.gif" title="">
+</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="JVM字节码执行"><a href="#JVM字节码执行" class="headerlink" title="JVM字节码执行"></a>JVM字节码执行</h2><h3 id="JVM桢栈结构"><a href="#JVM桢栈结构" class="headerlink" title="JVM桢栈结构"></a>JVM桢栈结构</h3><p>以下内容可以参照示例阅读，理解会不一样</p>
+<blockquote>
+<p>方法调用在JVM中转换成的是字节码执行，字节码指令执行的数据结构就是栈帧（stack frame）。也就是在虚拟机栈中的栈元素。虚拟机会为每个方法分配一个栈帧，因为虚拟机栈是LIFO(后进先出)的，所以当前线程正在活动的栈帧，也就是栈顶的栈帧，JVM规范中称之为“CurrentFrame”,这个当前栈帧对应的方法就是“CurrentMethod”。字节码的执行操作，指的就是对当前栈帧数据结构进行的操作。<br>  JVM的运行时数据区的结构如下图，本文主要讲桢栈结构。<br><img src="/2017/03/24/字节码及ASM使用/img3.png" alt="img3.png" title=""></p>
+<p>运行时数据区</p>
+<p>  栈帧的数据结构主要分为四个部分：局部变量表、操作数栈、动态链接以及方法返回地址（包括正常调用和异常调用的完成结果）。下面就一一介绍下这四种数据结构。</p>
+<p>局部变量表（local variables）</p>
+<p>  当方法被调用时，参数会传递到从0开始的连续的局部变量表的索引位置上。栈帧中局部变量表的长度存储在类或接口的二进制表示中。阅读Class文件会找到Code属性，所以能知道local variables的最大长度是在编译期间决定的。<b><font color="FFA500">一个局部变量表的占用了32位的存储空间（一个存储单位称之为slot，槽），所以可以存储一个boolean、byte、char、short、float、int、refrence和returnAdress数据，long和double需要2个连续的局部变量表来保存，通过较小位置的索引来获取。如果被调用的是实例方法，那么第0个位置存储“this”关键字代表当前实例对象的引用。</font></b>这个可以通过javap 工具查看实例方法和静态方法对比字节码指令的0位置。例子也可以参考JVM 字节码指令对于栈帧数据操作举例</p>
+<p>操作数栈（operand stack）</p>
+<p> 操作数栈同局部变量表一样，也是编译期间就能决定了其存储空间（最大的单位长度），通过 Code属性存储在类或接口的字节流中。操作数栈也是个LIFO栈。<br>  操作数栈是在JVM字节码执行一些指令（第二部分会介绍一些指令集）时创建的，主要是把局部变量表中的变量压入操作数栈，在操作数栈中进行字节码指令的操作，再将变量出操作数栈，结果入操作数栈。<b><font color="FFA500">同局部变量表,除了long和double,其他类型数据都只占用一个栈的单位深度。</font></b></p>
+<p>动态链接</p>
+<p>  每个栈帧指向运行时常量池中该栈帧所属的方法的引用，也就是字节码的发放调用的引用。动态链接就是将符号引用所表示的方法，转换成方法的直接引用。加载阶段或第一次使用时转化为直接引用的（将变量的访问转化为访问这些变量的存储结构所在的运行时内存位置）就叫做静态解析。JVM的动态链接还支持运行期转化为直接引用。也可以叫做Late Binding,晚期绑定。动态链接是java灵活OO的基础结构。可以参考一个例子来加深理解从字节码指令看重写在JVM中的实现</p>
+<p>方法返回地址</p>
+<p>  <b><font color="FFA500">方法正常退出，JVM执行引擎会恢复上层方法局部变量表操作数栈并把返回值压入调用者的栈帧的操作数栈，PC计数器的值就会调整到方法调用指令后面的一条指令。</font></b>这样使得当前的栈帧能够和调用者连接起来，并且让调用者的栈帧的操作数栈继续往下执行。<br>  方法的异常调用完成，主要是JVM抛出的异常，如果异常没有被捕获住，或者遇到athrow字节码指令显示抛出，那么就没有返回值给调用者。</p>
+</blockquote>
+<p><b><font color="FFA500"><br>注:</font></b></p>
+<ul>
+<li>操作long double类型数据，一定要分配两个slot，如果分配了一个slot不会报错，但会导致数据丢失;</li>
+<li>实例方法的第0个位置存储“this”关键字代表当前实例对象的引用;</li>
+<li>引用自<a href="https://www.atatech.org/articles/42062#" target="_blank" rel="external">JVM字节码执行模型及字节码指令集</a>，建议阅读《深入了解JVM》– 虚拟机执行子系统;</li>
+</ul>
+<p></p>
+<h3 id="字节码指令集"><a href="#字节码指令集" class="headerlink" title="字节码指令集"></a>字节码指令集</h3><p>以下的字节码指令集比较枯燥，可参照ASM Opcodes</p>
+<blockquote>
+<p>加载和存储指令<br>加载和存储指令用于将数据从栈帧的局部变量表和操作数栈之间来回传输。<br>       1)将一个局部变量加载到操作数栈的指令包括：iload,iload<em><n\>，lload、lload</n\></em><n\>、float、 fload<em><n\>、dload、dload</n\></em><n\>，aload、aload<em><n\>。<br>       2)将一个数值从操作数栈存储到局部变量表的指令：istore,istore</n\></em><n\>,lstore,lstore<em><n\>,fstore,fstore</n\></em><n\>,dstore,dstore<em><n\>,astore,astore</n\></em><n\><br>       3)将常量加载到操作数栈的指令：bipush,sipush,ldc,ldc_w,ldc2_w,aconst_null,iconst<em>ml,iconst</em><i\>,lconst<em><l\>,fconst</l\></em><f\>,dconst<em><d\><br>       4)局部变量表的访问索引指令:wide<br>一部分以尖括号结尾的指令代表了一组指令，如iload</d\></em><i\>，代表了iload_0,iload_1等，这几组指令都是带有一个操作数的通用指令。</i\></f\></i\></n\></n\></n\></n\></n\></p>
+<p>运算指令<br>算术指令用于对两个操作数栈上的值进行某种特定运算，并把结果重新存入到操作栈顶。<br>       1)加法指令:iadd,ladd,fadd,dadd<br>       2)减法指令:isub,lsub,fsub,dsub<br>       3)乘法指令:imul,lmul,fmul,dmul<br>       4)除法指令:idiv,ldiv,fdiv,ddiv<br>       5)求余指令:irem,lrem,frem,drem<br>       6)取反指令:ineg,leng,fneg,dneg<br>       7)位移指令:ishl,ishr,iushr,lshl,lshr,lushr<br>       8)按位或指令:ior,lor<br>       9)按位与指令:iand,land<br>       10)按位异或指令:ixor,lxor<br>       11)局部变量自增指令:iinc<br>       12)比较指令:dcmpg,dcmpl,fcmpg,fcmpl,lcmp<br>Java虚拟机没有明确规定整型数据溢出的情况，但规定了处理整型数据时，只有除法和求余指令出现除数为0时会导致虚拟机抛出异常。<br>Java虚拟机要求在浮点数运算的时候，所有结果否必须舍入到适当的精度，如果有两种可表示的形式与该值一样，会优先选择最低有效位为零的。称之为最接近数舍入模式。<br>浮点数向整数转换的时候，Java虚拟机使用IEEE 754标准中的向零舍入模式，这种模式舍入的结果会导致数字被截断，所有小数部分的有效字节会被丢掉。</p>
+<p>类型转换指令<br>类型转换指令将两种Java虚拟机数值类型相互转换，这些操作一般用于实现用户代码的显式类型转换操作。<br>JVM直接就支持宽化类型转换(小范围类型向大范围类型转换)：<br>       1)int类型到long,float,double类型<br>       2)long类型到float,double类型<br>       3)float到double类型<br>但在处理窄化类型转换时，必须显式使用转换指令来完成，这些指令包括：i2b、i2c、i2s、l2i、f2i、f2l、d2i、d2l和 d2f。<br>将int 或 long 窄化为整型T的时候，仅仅简单的把除了低位的N个字节以外的内容丢弃，N是T的长度。这有可能导致转换结果与输入值有不同的正负号。<br>在将一个浮点值窄化为整数类型T（仅限于 int 和 long 类型），将遵循以下转换规则：<br>       1）如果浮点值是NaN ， 呐转换结果就是int 或 long 类型的0<br>       2）如果浮点值不是无穷大，浮点值使用IEEE 754 的向零舍入模式取整，获得整数v， 如果v在T表示范围之内，那就过就是v<br>       3）否则，根据v的符号， 转换为T 所能表示的最大或者最小正数</p>
+<p>对象创建与访问指令<br>虽然类实例和数组都是对象，Java虚拟机对类实例和数组的创建与操作使用了不同的字节码指令。<br>       1)创建实例的指令:new<br>       2)创建数组的指令:newarray,anewarray,multianewarray<br>       3)访问字段指令:getfield,putfield,getstatic,putstatic<br>       4)把数组元素加载到操作数栈指令:baload,caload,saload,iaload,laload,faload,daload,aaload<br>       5)将操作数栈的数值存储到数组元素中执行:bastore,castore,castore,sastore,iastore,fastore,dastore,aastore<br>       6)取数组长度指令:arraylength JVM支持方法级同步和方法内部一段指令序列同步，这两种都是通过moniter实现的。<br>       7)检查实例类型指令:instanceof,checkcast</p>
+<p>操作数栈管理指令<br>如同操作一个普通数据结构中的堆栈那样，Java 虚拟机提供了一些用于直接操作操作数栈的指令，包括：<br>       1）将操作数栈的栈顶一个或两个元素出栈：pop、pop2<br>       2）复制栈顶一个或两个数值并将复制值或双份的复制值重新压入栈顶：dup、dup2、dup_x1、dup2_x1、dup_x2、dup2_x2。<br>       3）将栈最顶端的两个数值互换：swap</p>
+<p>控制转移指令<br>让JVM有条件或无条件从指定指令而不是控制转移指令的下一条指令继续执行程序。控制转移指令包括：<br>       1)条件分支:ifeq,iflt,ifle,ifne,ifgt,ifge,ifnull,ifnotnull,if_cmpeq,if_icmpne,if_icmlt,if_icmpgt等<br>       2)复合条件分支:tableswitch,lookupswitch<br>       3)无条件分支:goto,goto_w,jsr,jsr_w,ret</p>
+<p>JVM中有专门的指令集处理int和reference类型的条件分支比较操作，为了可以无明显标示一个实体值是否是null,有专门的指令检测null 值。boolean类型和byte类型,char类型和short类型的条件分支比较操作，都使用int类型的比较指令完成，而 long,float,double条件分支比较操作，由相应类型的比较运算指令，运算指令会返回一个整型值到操作数栈中，随后再执行int类型的条件比较操作完成整个分支跳转。各种类型的比较都最终会转化为int类型的比较操作。</p>
+<p>方法调用和返回指令<br>invokevirtual指令:调用对象的实例方法，根据对象的实际类型进行分派(虚拟机分派)。<br>invokeinterface指令:调用接口方法，在运行时搜索一个实现这个接口方法的对象，找出合适的方法进行调用。<br>invokespecial:调用需要特殊处理的实例方法，包括实例初始化方法，私有方法和父类方法<br>invokestatic:调用类方法(static)<br>方法返回指令是根据返回值的类型区分的，包括ireturn(返回值是boolean,byte,char,short和 int),lreturn,freturn,drturn和areturn，另外一个return供void方法，实例初始化方法，类和接口的类初始化i方法使用。</p>
+<p>异常处理指令<br>在Java程序中显式抛出异常的操作（throw语句）都有athrow 指令来实现，除了用throw 语句显示抛出异常情况外，Java虚拟机规范还规定了许多运行时异常会在其他Java虚拟机指令检测到异常状况时自动抛出。<br>在Java虚拟机中，处理异常不是由字节码指令来实现的，而是采用异常表来完成的。</p>
+<p>同步指令<br>方法级的同步是隐式的，无需通过字节码指令来控制，它实现在方法调用和返回操作中。虚拟机从方法常量池中的方法标结构中的 ACC_SYNCHRONIZED标志区分是否是同步方法。方法调用时，调用指令会检查该标志是否被设置，若设置，执行线程持有moniter，然后执行方法，最后完成方法时释放moniter。<br>同步一段指令集序列，通常由synchronized块标示，JVM指令集中有monitorenter和monitorexit来支持synchronized语义。<br>结构化锁定是指方法调用期间每一个monitor退出都与前面monitor进入相匹配的情形。JVM通过以下两条规则来保证结结构化锁成立(T代表一线程，M代表一个monitor)：<br>       1)T在方法执行时持有M的次数必须与T在方法完成时释放的M次数相等<br>       2)任何时刻都不会出现T释放M的次数比T持有M的次数多的情况</p>
+</blockquote>
+<p><b><font color="FFA500"><br>注：</font></b></p>
+<ul>
+<li><p>大多数的指令有前缀和（或）后缀来表明其操作数的类型。如下表</p>
+<p>  | 前/后缀 | 操作数类型 |<br>  | ——| —— |<br>  | i | 整数 |<br>  | l | 长整数 |<br>  | s | 短整数 |<br>  | b | 字节 |<br>  | c | 字符 |<br>  | f | 单精度浮点数 |<br>  | d | 双精度浮点数 |<br>  | z | 布尔值 |<br>  | a | 引用 | </p>
+</li>
+<li><p>引用自<a href="http://blog.csdn.net/zq602316498/article/details/38847935" target="_blank" rel="external">深入理解java虚拟机 字节码指令简介</a><br></p>
+</li>
+</ul>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例:"></a>示例:</h3><p>JAVA源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.taobao.film;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@author</span> - zhupin(kaiqiang.gkq@alibaba-inc.com)</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String HELLO_CONST = <span class="string">"Hello"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String CONST = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> &#123;</div><div class="line">        CONST = HELLO_CONST + <span class="string">"%s!"</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (args != <span class="keyword">null</span> &amp;&amp; args.length == <span class="number">1</span>) &#123;</div><div class="line">            System.out.println(String.format(CONST, args[<span class="number">0</span>]));</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对应字节码<br>简记 ms:操作数栈最大深度 ml:局部变量表最大容量 s:操作数栈 l:局部变量表</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// class version 49.0 (49)</span></div><div class="line"><span class="comment">// access flags 0x21</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>/<span class="title">taobao</span>/<span class="title">film</span>/<span class="title">Demo</span> </span>&#123;</div><div class="line"></div><div class="line">  <span class="comment">// compiled from: Demo.java</span></div><div class="line"></div><div class="line">  <span class="comment">// access flags 0x1A 常量,类被装载时分配空间 private static final String HELLO_CONST = "Hello";</span></div><div class="line">  <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Ljava/lang/String; HELLO_CONST = <span class="string">"Hello"</span></div><div class="line"></div><div class="line">  <span class="comment">// access flags 0xA 静态属性,类被装载时分配空间 private static String CONST ;</span></div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> Ljava/lang/String; CONST</div><div class="line"></div><div class="line">  <span class="comment">// access flags 0x1 没有重载构造函数，默认构造函数&lt;init&gt;()V</span></div><div class="line">  <span class="keyword">public</span> &lt;init&gt;()V</div><div class="line">   L0 <span class="comment">// 标签表示方法的字节码中的位置。标签用于跳转，goto和切换指令，以及用于尝试catch块。标签指定刚刚之后的指令。注意，在标签和它指定的指令（例如其他标签，堆栈映射帧，行号等）之间可以有其他元素。</span></div><div class="line">    LINENUMBER <span class="number">6</span> L0 <span class="comment">//异常的栈信息中对应的line number，可删除不影响运行</span></div><div class="line">    ALOAD <span class="number">0</span> <span class="comment">//this</span></div><div class="line">    INVOKESPECIAL java/lang/Object.&lt;init&gt; ()V <span class="comment">//this.super()</span></div><div class="line">    RETURN</div><div class="line">   L1</div><div class="line">    LOCALVARIABLE <span class="keyword">this</span> Lcom/taobao/film/Demo; L0 L1 <span class="number">0</span></div><div class="line">    MAXSTACK = <span class="number">1</span> <span class="comment">//最大栈深度1,压栈局部变量this</span></div><div class="line">    MAXLOCALS = <span class="number">1</span> <span class="comment">//局部变量数1,局部变量this</span></div><div class="line"></div><div class="line">  <span class="comment">// access flags 0x9 简记 ms:操作数栈最大深度 ml:局部变量表最大容量 s:操作数栈 l:局部变量表</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="title">main</span><span class="params">([Ljava/lang/String;)</span>V</span></div><div class="line">   L0</div><div class="line">    LINENUMBER 15 L0</div><div class="line">    ALOAD 0 <span class="comment">//非静态方法,局部变量0即方法入参第一个参数args reference; ms=1,ml=1,s=[args ref],l=[args ref]</span></div><div class="line">    IFNULL L1  <span class="comment">//if(args ref==null)跳转 L1 return</span></div><div class="line">    ALOAD 0 <span class="comment">//load args ms=1,ml=1,s=[args ref],l=[args ref]</span></div><div class="line">    ARRAYLENGTH<span class="comment">//计算args.length将结果入操作数栈 ms=1,ml=1,s=[args ref],l=[args ref] </span></div><div class="line">    ICONST_1 <span class="comment">//数字常量1 ms=2,ml=1,s=[1,args ref],l=[args ref] </span></div><div class="line">    IF_ICMPNE L1 <span class="comment">//if(args.length == 1) 跳转 L1 return </span></div><div class="line">   L2 <span class="comment">//ms=2,ml=1,s=[],l=[args ref] </span></div><div class="line">    LINENUMBER 16 L2</div><div class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;<span class="comment">//访问System.out，入操作数栈 ms=2,ml=1,s=[System.out],l=[args ref]  </span></div><div class="line">    GETSTATIC com/taobao/film/Demo.CONST : Ljava/lang/String;<span class="comment">//访问CONST，入操作数栈 ms=2,ml=1,s=[CONST,System.out],l=[args ref]  </span></div><div class="line">    &#123;<span class="comment">//这里一段，实现的是new Object[]&#123;args[0]&#125;,String.format(String format, Object... args) </span></div><div class="line">    ICONST_1<span class="comment">//1  ms=3,ml=1,s=[1,CONST,System.out],l=[args ref]  </span></div><div class="line">    ANEWARRAY java/lang/Object<span class="comment">// new Object[1]; ms=3,ml=1,s=[objects ref,CONST,System.out],l=[args ref]  </span></div><div class="line">    DUP <span class="comment">// ms=4,ml=1,s=[objects ref,objects ref,CONST,System.out],l=[args ref]  </span></div><div class="line">    ICONST_0<span class="comment">//0 ms=5,ml=1,s=[0,objects ref,objects ref,CONST,System.out],l=[args ref]  </span></div><div class="line">    ALOAD <span class="number">0</span> <span class="comment">//args reference入操作数栈; ms=6,ml=1,s=[args ref,0,objects ref,objects ref,CONST,System.out],l=[args ref]  </span></div><div class="line">    ICONST_0 <span class="comment">//0 ms=7,ml=1,s=[0,args ref,0,objects ref,objects ref,CONST,System.out],l=[args ref] </span></div><div class="line">    AALOAD <span class="comment">//args[0] ms=7,ml=1,s=[args[0],0,objects ref,objects ref,CONST,System.out],l=[args ref]</span></div><div class="line">    AASTORE <span class="comment">//objects[0]=args[0]; ms=7,ml=1,s=[objects ref,CONST,System.out],l=[args ref]</span></div><div class="line">    &#125;</div><div class="line">    INVOKESTATIC java/lang/String.format (Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;<span class="comment">//String.format(CONST,objects) ms=7,ml=1,s=[objects ref,CONST,System.out],l=[args ref]</span></div><div class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V <span class="comment">//System.out.println(...); ms=7,ml=1,s=[],l=[args ref]</span></div><div class="line">   L1</div><div class="line">    LINENUMBER <span class="number">18</span> L1</div><div class="line">    RETURN</div><div class="line">   L3</div><div class="line">    LOCALVARIABLE args [Ljava/lang/String; L0 L3 <span class="number">0</span></div><div class="line">    MAXSTACK = <span class="number">7</span></div><div class="line">    MAXLOCALS = <span class="number">1</span></div><div class="line"></div><div class="line">  <span class="comment">// access flags 0x8 &lt;clinit&gt;V classload init，静态代码初始块，类被装在时init</span></div><div class="line">  <span class="keyword">static</span> &lt;clinit&gt;()V</div><div class="line">   L0</div><div class="line">    LINENUMBER <span class="number">8</span> L0 </div><div class="line">    ACONST_NULL <span class="comment">//压栈常量NULL</span></div><div class="line">    PUTSTATIC com/taobao/film/Demo.CONST : Ljava/lang/String; <span class="comment">//静态属性赋值，CONST=null</span></div><div class="line">   L1</div><div class="line">    LINENUMBER <span class="number">11</span> L1</div><div class="line">    LDC <span class="string">"Hello%s!"</span> <span class="comment">//加载常量Hello%s! 编译优化，hello+%s编译优化为常量Hello%s!</span></div><div class="line">    PUTSTATIC com/taobao/film/Demo.CONST : Ljava/lang/String;<span class="comment">//赋值Hello%s!</span></div><div class="line">   L2</div><div class="line">    LINENUMBER <span class="number">12</span> L2</div><div class="line">    RETURN</div><div class="line">    MAXSTACK = <span class="number">1</span> <span class="comment">//只有赋值操作，操作数栈深度1</span></div><div class="line">    MAXLOCALS = <span class="number">0</span> <span class="comment">//静态方法无局部变量</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="借助字节码能干什么"><a href="#借助字节码能干什么" class="headerlink" title="借助字节码能干什么"></a>借助字节码能干什么</h2><p>回答这个问题前我们首先得明白字节码是作用于运行期，所以一般用来在运行期改变类的行为，基本上都会结合代理模式使用。</p>
+<h3 id="常见字节码框架"><a href="#常见字节码框架" class="headerlink" title="常见字节码框架"></a>常见字节码框架</h3><img src="/2017/03/24/字节码及ASM使用/img4.png" alt="img4.png" title="">
+<ul>
+<li><a href="http://asm.ow2.org/" target="_blank" rel="external">ASM</a></li>
+<li><a href="http://commons.apache.org/proper/commons-bcel/" target="_blank" rel="external">BCEL</a></li>
+<li><a href="https://github.com/cglib/cglib" target="_blank" rel="external">CGLIB</a></li>
+<li><a href="http://jboss-javassist.github.io/javassist/" target="_blank" rel="external">Javassist</a></li>
+<li><a href="http://bytebuddy.net/#/" target="_blank" rel="external">Byte Buddy</a></li>
+</ul>
+<p>本文来介绍下ASM框架的使用(了解一点底层字节码操作，对了解JVM执行过程以及我们常用框架的实现原理都会有新的认识)<br><img src="/2017/03/24/字节码及ASM使用/img5.jpg" alt="img5.jpg" title=""><br>ClassReader用来读取原有的字节码，ClassWriter用于写入字节码，ClassVisitor、FieldVisitor、MethodVisitor、AnnotationVisitor访问修改对应组件。(一般不要通过ClassReader读取再通过Vistor修改类型为再ClassWriter回写，覆盖原有类行为，采用继承会更安全)</p>
+<p>注: </p>
+<ul>
+<li><a href="https://blog.newrelic.com/2014/09/29/diving-bytecode-manipulation-creating-audit-log-asm-javassist" target="_blank" rel="external">Diving into Bytecode Manipulation</a></li>
+<li><a href="http://www.infoq.com/cn/articles/Living-Matrix-Bytecode-Manipulation" target="_blank" rel="external">字节码操纵技术探秘
+</a></li>
+</ul>
+<h3 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><p>以下代码效果等同于上面的Demo示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.FileOutputStream;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Method;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.objectweb.asm.AnnotationVisitor;</div><div class="line"><span class="keyword">import</span> org.objectweb.asm.ClassWriter;</div><div class="line"><span class="keyword">import</span> org.objectweb.asm.FieldVisitor;</div><div class="line"><span class="keyword">import</span> org.objectweb.asm.Label;</div><div class="line"><span class="keyword">import</span> org.objectweb.asm.MethodVisitor;</div><div class="line"><span class="keyword">import</span> org.objectweb.asm.Opcodes;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoDump</span> <span class="keyword">implements</span> <span class="title">Opcodes</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] dump() <span class="keyword">throws</span> Exception &#123;</div><div class="line"></div><div class="line">        ClassWriter cw = <span class="keyword">new</span> ClassWriter(<span class="number">0</span>);</div><div class="line">        FieldVisitor fv;</div><div class="line">        MethodVisitor mv;</div><div class="line">        AnnotationVisitor av0;</div><div class="line"></div><div class="line">        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, <span class="string">"com/taobao/film/Demo"</span>, <span class="keyword">null</span>, <span class="string">"java/lang/Object"</span>, <span class="keyword">null</span>);</div><div class="line"></div><div class="line">        cw.visitSource(<span class="string">"Demo.java"</span>, <span class="keyword">null</span>);</div><div class="line"></div><div class="line">        &#123;</div><div class="line">            fv = cw.visitField(ACC_PRIVATE + ACC_FINAL + ACC_STATIC, <span class="string">"HELLO_CONST"</span>, <span class="string">"Ljava/lang/String;"</span>, <span class="keyword">null</span>,</div><div class="line">                <span class="string">"Hello"</span>);</div><div class="line">            fv.visitEnd();</div><div class="line">        &#125;</div><div class="line">        &#123;</div><div class="line">            fv = cw.visitField(ACC_PRIVATE + ACC_STATIC, <span class="string">"CONST"</span>, <span class="string">"Ljava/lang/String;"</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">            fv.visitEnd();</div><div class="line">        &#125;</div><div class="line">        &#123;</div><div class="line">            mv = cw.visitMethod(ACC_PUBLIC, <span class="string">"&lt;init&gt;"</span>, <span class="string">"()V"</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">            mv.visitCode();</div><div class="line">            Label l0 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitLabel(l0);</div><div class="line">            mv.visitLineNumber(<span class="number">6</span>, l0);</div><div class="line">            mv.visitVarInsn(ALOAD, <span class="number">0</span>);</div><div class="line">            mv.visitMethodInsn(INVOKESPECIAL, <span class="string">"java/lang/Object"</span>, <span class="string">"&lt;init&gt;"</span>, <span class="string">"()V"</span>, <span class="keyword">false</span>);</div><div class="line">            mv.visitInsn(RETURN);</div><div class="line">            Label l1 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitLabel(l1);</div><div class="line">            mv.visitLocalVariable(<span class="string">"this"</span>, <span class="string">"Lcom/taobao/film/Demo;"</span>, <span class="keyword">null</span>, l0, l1, <span class="number">0</span>);</div><div class="line">            mv.visitMaxs(<span class="number">1</span>, <span class="number">1</span>);</div><div class="line">            mv.visitEnd();</div><div class="line">        &#125;</div><div class="line">        &#123;</div><div class="line">            mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, <span class="string">"main"</span>, <span class="string">"([Ljava/lang/String;)V"</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">            mv.visitCode();</div><div class="line">            Label l0 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitLabel(l0);</div><div class="line">            mv.visitLineNumber(<span class="number">15</span>, l0);</div><div class="line">            mv.visitVarInsn(ALOAD, <span class="number">0</span>);</div><div class="line">            Label l1 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitJumpInsn(IFNULL, l1);</div><div class="line">            mv.visitVarInsn(ALOAD, <span class="number">0</span>);</div><div class="line">            mv.visitInsn(ARRAYLENGTH);</div><div class="line">            mv.visitInsn(ICONST_1);</div><div class="line">            mv.visitJumpInsn(IF_ICMPNE, l1);</div><div class="line">            Label l2 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitLabel(l2);</div><div class="line">            mv.visitLineNumber(<span class="number">16</span>, l2);</div><div class="line">            mv.visitFieldInsn(GETSTATIC, <span class="string">"java/lang/System"</span>, <span class="string">"out"</span>, <span class="string">"Ljava/io/PrintStream;"</span>);</div><div class="line">            mv.visitFieldInsn(GETSTATIC, <span class="string">"com/taobao/film/Demo"</span>, <span class="string">"CONST"</span>, <span class="string">"Ljava/lang/String;"</span>);</div><div class="line">            mv.visitInsn(ICONST_1);</div><div class="line">            mv.visitTypeInsn(ANEWARRAY, <span class="string">"java/lang/Object"</span>);</div><div class="line">            mv.visitInsn(DUP);</div><div class="line">            mv.visitInsn(ICONST_0);</div><div class="line">            mv.visitVarInsn(ALOAD, <span class="number">0</span>);</div><div class="line">            mv.visitInsn(ICONST_0);</div><div class="line">            mv.visitInsn(AALOAD);</div><div class="line">            mv.visitInsn(AASTORE);</div><div class="line">            mv.visitMethodInsn(INVOKESTATIC, <span class="string">"java/lang/String"</span>, <span class="string">"format"</span>,</div><div class="line">                <span class="string">"(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"</span>, <span class="keyword">false</span>);</div><div class="line">            mv.visitMethodInsn(INVOKEVIRTUAL, <span class="string">"java/io/PrintStream"</span>, <span class="string">"println"</span>, <span class="string">"(Ljava/lang/String;)V"</span>, <span class="keyword">false</span>);</div><div class="line">            mv.visitLabel(l1);</div><div class="line">            mv.visitLineNumber(<span class="number">18</span>, l1);</div><div class="line">            mv.visitInsn(RETURN);</div><div class="line">            Label l3 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitLabel(l3);</div><div class="line">            mv.visitLocalVariable(<span class="string">"args"</span>, <span class="string">"[Ljava/lang/String;"</span>, <span class="keyword">null</span>, l0, l3, <span class="number">0</span>);</div><div class="line">            mv.visitMaxs(<span class="number">7</span>, <span class="number">1</span>);</div><div class="line">            mv.visitEnd();</div><div class="line">        &#125;</div><div class="line">        &#123;</div><div class="line">            mv = cw.visitMethod(ACC_STATIC, <span class="string">"&lt;clinit&gt;"</span>, <span class="string">"()V"</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">            mv.visitCode();</div><div class="line">            Label l0 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitLabel(l0);</div><div class="line">            mv.visitLineNumber(<span class="number">8</span>, l0);</div><div class="line">            mv.visitInsn(ACONST_NULL);</div><div class="line">            mv.visitFieldInsn(PUTSTATIC, <span class="string">"com/taobao/film/Demo"</span>, <span class="string">"CONST"</span>, <span class="string">"Ljava/lang/String;"</span>);</div><div class="line">            Label l1 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitLabel(l1);</div><div class="line">            mv.visitLineNumber(<span class="number">11</span>, l1);</div><div class="line">            mv.visitLdcInsn(<span class="string">"Hello%s!"</span>);</div><div class="line">            mv.visitFieldInsn(PUTSTATIC, <span class="string">"com/taobao/film/Demo"</span>, <span class="string">"CONST"</span>, <span class="string">"Ljava/lang/String;"</span>);</div><div class="line">            Label l2 = <span class="keyword">new</span> Label();</div><div class="line">            mv.visitLabel(l2);</div><div class="line">            mv.visitLineNumber(<span class="number">12</span>, l2);</div><div class="line">            mv.visitInsn(RETURN);</div><div class="line">            mv.visitMaxs(<span class="number">1</span>, <span class="number">0</span>);</div><div class="line">            mv.visitEnd();</div><div class="line">        &#125;</div><div class="line">        cw.visitEnd();</div><div class="line"></div><div class="line">        <span class="keyword">return</span> cw.toByteArray();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyClassLoader</span> <span class="keyword">extends</span> <span class="title">ClassLoader</span> </span>&#123;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">MyClassLoader</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">super</span>();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">MyClassLoader</span><span class="params">(ClassLoader cl)</span> </span>&#123;</div><div class="line">            <span class="keyword">super</span>(cl);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">public</span> Class&lt;?&gt; defineClass(String name, <span class="keyword">byte</span>[] b) &#123;</div><div class="line">            <span class="keyword">return</span> defineClass(name, b, <span class="number">0</span>, b.length);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">byte</span>[] bytes = dump();</div><div class="line">        FileOutputStream fileOutputStream = <span class="keyword">new</span> FileOutputStream(<span class="string">"D:\\Demo.class"</span>);</div><div class="line">        fileOutputStream.write(bytes);</div><div class="line">        fileOutputStream.close();</div><div class="line">        MyClassLoader classLoader = <span class="keyword">new</span> MyClassLoader(Thread.currentThread().getContextClassLoader());</div><div class="line">        Class&lt;?&gt; testClass = classLoader.defineClass(<span class="string">"com.taobao.film.Demo"</span>,</div><div class="line">            bytes);</div><div class="line">        <span class="comment">// invoke static</span></div><div class="line">        Method staticMain = testClass.getMethod(<span class="string">"main"</span>, String[].class);</div><div class="line">        staticMain.invoke(<span class="keyword">null</span>, <span class="keyword">new</span> Object[] &#123;<span class="keyword">new</span> String[] &#123;<span class="string">"zhupin"</span>&#125;&#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><a href="https://github.com/pocrd/net.pocrd.core/blob/master/src/main/java/net/pocrd/util/POJOSerializerProvider.java" target="_blank" rel="external">XML快速序列化</a></p>
+<p><a href="https://github.com/TimGuan/net.pocrd.core/blob/master/src/main/java/net/pocrd/util/HttpApiProvider.java" target="_blank" rel="external">为无状态逻辑类的指定函数产生一个代理，代理接口接受字符串数组，转换后调用原函数</a></p>
+<h3 id="知名框架中的使用"><a href="#知名框架中的使用" class="headerlink" title="知名框架中的使用"></a>知名框架中的使用</h3><ul>
+<li>fastjson hotcode asm</li>
+<li>dubbo hsf javaassist</li>
+<li>hibernate cglib javaassist</li>
+<li>spring aop cglib (通过设置-Dcglib.debugLocation=D://tmp 开启classdump)</li>
+<li>mockito cglib</li>
+</ul>
+<p>##建议<br>最早接触字节码编程还是在使用IL(C# Emit)，也在大型项目中使用过ASM获得了不错的效果。不过个人觉得操作字节码编程还是要保持谨慎态度。下面是我的一点小建议：</p>
+<ul>
+<li>操作字节码作用于运行期，对于开发人员是完全透明的。</li>
+<li>字节码编程的可阅读可维护性比较差，不要滥用字节码编程。<ul>
+<li>能通过设计模式实现的场景尽量通过设计模式实现；</li>
+<li>字节码编程中复杂的逻辑也尽量使用java实现，在字节码中调用；</li>
+<li>使用字节码解决一些框架性的问题，不要用于处理易变逻辑；</li>
+</ul>
+</li>
+<li>字节码编程从逻辑块着手，优先明确程序跳转Label，再补充逻辑执行</li>
+<li>借助工具<br>推荐使用intellj idea插件ASM Bytecode Outline，目前生成的字节码对应到 ASM 5.x。<br>使用decompile工具校验生成代码是否正确。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/ASM/" rel="tag"># ASM</a>
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/24/github-pages-hexo-NexT-搭建静态博客/" rel="next" title="github pages + hexo + NexT 搭建静态博客">
+                <i class="fa fa-chevron-left"></i> github pages + hexo + NexT 搭建静态博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/24/常用签名加密算法及其应用场景/" rel="prev" title="常用签名加密算法及其应用场景">
+                常用签名加密算法及其应用场景 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="答案在风中" />
+          <p class="site-author-name" itemprop="name">答案在风中</p>
+           
+              <p class="site-description motion-element" itemprop="description">匠心</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/TimGuan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是字节码？"><span class="nav-number">1.</span> <span class="nav-text">什么是字节码？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM字节码执行"><span class="nav-number">2.</span> <span class="nav-text">JVM字节码执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM桢栈结构"><span class="nav-number">2.1.</span> <span class="nav-text">JVM桢栈结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字节码指令集"><span class="nav-number">2.2.</span> <span class="nav-text">字节码指令集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例"><span class="nav-number">2.3.</span> <span class="nav-text">示例:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#借助字节码能干什么"><span class="nav-number">3.</span> <span class="nav-text">借助字节码能干什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常见字节码框架"><span class="nav-number">3.1.</span> <span class="nav-text">常见字节码框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用示例"><span class="nav-number">3.2.</span> <span class="nav-text">使用示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#知名框架中的使用"><span class="nav-number">3.3.</span> <span class="nav-text">知名框架中的使用</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">答案在风中</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "53d1ac2e2c33440383226e439c20a1aa",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("BT7aC5Gv8NiE4fa0r2KGORyl-gzGzoHsz", "WAsHCn555Qb2MF2XyHWvfHGx");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

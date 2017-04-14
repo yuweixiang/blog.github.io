@@ -1,0 +1,922 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="title: angularjs集成nvd3打造数据可视化date: 2017-03-23 16:28:13categories:   编程 angularjstags: angularjs inspinia nvd3   NVD3 Re-usable charts for d3.jsd3.js是一个大名鼎鼎的数据可视化工具,官网地址,API文档.nvd3是在d3.js基础上封装的一个开源可复用的">
+<meta name="keywords">
+<meta property="og:type" content="article">
+<meta property="og:title" content="angularjs集成nvd3打造数据可视化">
+<meta property="og:url" content="http://www.timguan.net/2017/03/24/angularjs集成nvd3打造数据可视化/index.html">
+<meta property="og:site_name" content="答案在风中的博客">
+<meta property="og:description" content="title: angularjs集成nvd3打造数据可视化date: 2017-03-23 16:28:13categories:   编程 angularjstags: angularjs inspinia nvd3   NVD3 Re-usable charts for d3.jsd3.js是一个大名鼎鼎的数据可视化工具,官网地址,API文档.nvd3是在d3.js基础上封装的一个开源可复用的">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/angularjs集成nvd3打造数据可视化/img1.png">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/angularjs集成nvd3打造数据可视化/img2.png">
+<meta property="og:updated_time" content="2017-04-01T15:12:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="angularjs集成nvd3打造数据可视化">
+<meta name="twitter:description" content="title: angularjs集成nvd3打造数据可视化date: 2017-03-23 16:28:13categories:   编程 angularjstags: angularjs inspinia nvd3   NVD3 Re-usable charts for d3.jsd3.js是一个大名鼎鼎的数据可视化工具,官网地址,API文档.nvd3是在d3.js基础上封装的一个开源可复用的">
+<meta name="twitter:image" content="http://www.timguan.net/2017/03/24/angularjs集成nvd3打造数据可视化/img1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7HAIUMNUNC',
+      apiKey: '323ef222dba6ce48bd6f811f277ea482',
+      indexName: 'index of blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.timguan.net/2017/03/24/angularjs集成nvd3打造数据可视化/"/>
+
+
+
+
+
+  <title> angularjs集成nvd3打造数据可视化 | 答案在风中的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">答案在风中的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">blowing in the wind</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.timguan.net/2017/03/24/angularjs集成nvd3打造数据可视化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="答案在风中">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="答案在风中的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                angularjs集成nvd3打造数据可视化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-24T11:56:44+08:00">
+                2017-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/03/24/angularjs集成nvd3打造数据可视化/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/24/angularjs集成nvd3打造数据可视化/" class="leancloud_visitors" data-flag-title="angularjs集成nvd3打造数据可视化">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>title: angularjs集成nvd3打造数据可视化<br>date: 2017-03-23 16:28:13<br>categories: </p>
+<ul>
+<li>编程</li>
+<li>angularjs<br>tags:</li>
+<li>angularjs</li>
+<li>inspinia</li>
+<li>nvd3</li>
+</ul>
+<hr>
+<h1 id="NVD3-Re-usable-charts-for-d3-js"><a href="#NVD3-Re-usable-charts-for-d3-js" class="headerlink" title="NVD3 Re-usable charts for d3.js"></a>NVD3 Re-usable charts for d3.js</h1><p>d3.js是一个大名鼎鼎的数据可视化工具,<a href="https://d3js.org/" target="_blank" rel="external">官网地址</a>,<a href="https://github.com/d3/d3/wiki/API--%E4%B8%AD%E6%96%87%E6%89%8B%E5%86%8C" target="_blank" rel="external">API文档</a>.<br>nvd3是在d3.js基础上封装的一个开源可复用的图表库,能够大大的提升图表制作的开发效率,在github上也是5000+star的项目,<br><a href="http://nvd3.org/index.html" target="_blank" rel="external">项目官网地址</a>,<a href="https://github.com/novus/nvd3" target="_blank" rel="external">项目地址</a>,<a href="http://nvd3.org/examples/index.html" target="_blank" rel="external">这是一些demo</a>.<br><a id="more"></a></p>
+<h1 id="基础依赖"><a href="#基础依赖" class="headerlink" title="基础依赖"></a>基础依赖</h1><p>nvd3本身仅只依赖d3库,因为我们的项目使用的是angularjs,所以这里也需要用到nvd3的angular插件angular-nvd3.js<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">$stateProvider</div><div class="line">.state(<span class="string">'charts'</span>, &#123;</div><div class="line">    <span class="attr">abstract</span>: <span class="literal">true</span>, <span class="comment">//类似继承的概念，不会直接转换到这个转态，而是从这个转态进行过度。</span></div><div class="line">    url: <span class="string">"/charts"</span>,</div><div class="line">    <span class="attr">templateUrl</span>: <span class="string">"views/common/content.html"</span>,</div><div class="line">&#125;)</div><div class="line">.state(<span class="string">'charts.order_monitor_chart'</span>, &#123; <span class="comment">//从charts继承</span></div><div class="line">            url: <span class="string">"/order_monitor_chart"</span>,</div><div class="line">            <span class="attr">templateUrl</span>: <span class="string">"views/tfsupport/order_monitor_chart.html"</span>,</div><div class="line">            <span class="attr">data</span>: &#123; <span class="attr">pageTitle</span>: <span class="string">'失败订单监控'</span> &#125;,</div><div class="line">            <span class="attr">resolve</span>: &#123;</div><div class="line">                <span class="attr">loadPlugin</span>: <span class="function"><span class="keyword">function</span>(<span class="params">$ocLazyLoad</span>) </span>&#123;</div><div class="line">                    <span class="keyword">return</span> $ocLazyLoad.load([&#123;</div><div class="line">                        <span class="attr">serie</span>: <span class="literal">true</span>,</div><div class="line">                        <span class="attr">files</span>: [<span class="string">'js/plugins/d3/d3.js'</span>]</div><div class="line">                    &#125;, &#123;</div><div class="line">                        <span class="attr">serie</span>: <span class="literal">true</span>,</div><div class="line">                        <span class="attr">files</span>: [<span class="string">'js/plugins/nvd3/build/nv.d3.js'</span>, <span class="string">'js/plugins/nvd3/build/nv.d3.css'</span>]</div><div class="line">                    &#125;, &#123;</div><div class="line">                        <span class="attr">serie</span>: <span class="literal">true</span>,</div><div class="line">                        <span class="attr">name</span>: <span class="string">'nvd3'</span>,</div><div class="line">                        <span class="attr">files</span>: [<span class="string">'js/plugins/angular-nvd3/dist/angular-nvd3.js'</span>]</div><div class="line">                    &#125;]);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;)</div></pre></td></tr></table></figure></p>
+<p>（项目中使用了oclazyload做了依赖项的懒加载，如需立即加载直接进行页面资源引用即可）</p>
+<h1 id="nvd3-angular使用"><a href="#nvd3-angular使用" class="headerlink" title="nvd3+angular使用"></a>nvd3+angular使用</h1><h2 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h2><p>angular-nvd3.js库中已经封装了nvd3相关的directive,在模板中引用会非常的便利<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">nvd3</span> <span class="attr">options</span>=<span class="string">"options"</span> <span class="attr">data</span>=<span class="string">"datas"</span> <span class="attr">class</span>=<span class="string">"with-3d-shadow with-transitions row"</span> <span class="attr">config</span>=<span class="string">"&#123;refreshDataOnly: true, deepWatchData: true&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">nvd3</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>没错就这么简单一句,加上数据就能绘制出酷炫的图表。<br>options对应了图表的配置,data绑定了图表数据,config对应了图表的一些系统属性<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$scope.config = &#123;</div><div class="line">    <span class="attr">visible</span>: <span class="literal">true</span>, <span class="comment">// default: true</span></div><div class="line">    extended: <span class="literal">false</span>, <span class="comment">// default: false</span></div><div class="line">    disabled: <span class="literal">false</span>, <span class="comment">// default: false</span></div><div class="line">    refreshDataOnly: <span class="literal">true</span>, <span class="comment">// default: true 这个定义数据更新的策略是重新绘图还是只绘制数据</span></div><div class="line">    deepWatchOptions: <span class="literal">true</span>, <span class="comment">// default: true</span></div><div class="line">    deepWatchData: <span class="literal">true</span>, <span class="comment">// default: true</span></div><div class="line">    deepWatchDataDepth: <span class="number">2</span>, <span class="comment">// default: 2 //定义了数据和视图的绑定层次 </span></div><div class="line">    <span class="comment">//0 - By Reference (the least powerful, but the most efficient) </span></div><div class="line">    <span class="comment">//1 - By Collection Items</span></div><div class="line">    <span class="comment">//2 - By Value (the most powerful, but also the most expensive; default value)</span></div><div class="line">    debounce: <span class="number">10</span> <span class="comment">// default: 10</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h2><p>准备好模板接下来就需要通过controller向模板输出数据，用于图表绘制。<br>图表选项定义<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">$scope.options = &#123;</div><div class="line">    <span class="attr">chart</span>: &#123;</div><div class="line">        <span class="attr">type</span>: <span class="string">'lineChart'</span>,</div><div class="line">        <span class="attr">height</span>: <span class="number">500</span>,</div><div class="line">        <span class="attr">margin</span>: &#123;</div><div class="line">            <span class="attr">top</span>: <span class="number">20</span>,</div><div class="line">            <span class="attr">right</span>: <span class="number">20</span>,</div><div class="line">            <span class="attr">bottom</span>: <span class="number">120</span>,</div><div class="line">            <span class="attr">left</span>: <span class="number">80</span></div><div class="line">        &#125;,</div><div class="line">        <span class="attr">duration</span>: <span class="number">500</span>,</div><div class="line">        <span class="attr">xAxis</span>: &#123;<span class="comment">//x轴数据相关配置</span></div><div class="line">            axisLabel: <span class="string">'时间'</span>,</div><div class="line">            <span class="attr">rotateLabels</span>: <span class="number">-45</span>,<span class="comment">//x轴标签旋转</span></div><div class="line">            tickFormat: <span class="function"><span class="keyword">function</span>(<span class="params">d</span>) </span>&#123;<span class="comment">//x轴数据刻度的格式化</span></div><div class="line">                <span class="keyword">return</span> moment(d).format(<span class="string">'MM-DD hh:mm'</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;,</div><div class="line">        <span class="attr">yAxis</span>: &#123;</div><div class="line">            <span class="attr">axisLabel</span>: <span class="string">'数量'</span>,</div><div class="line">        &#125;,</div><div class="line">        <span class="attr">useInteractiveGuideline</span>: <span class="literal">true</span>,</div><div class="line">        <span class="attr">line</span>: &#123;<span class="comment">//图表的点击等事件的自定义回调</span></div><div class="line">            dispatch: &#123;</div><div class="line">                <span class="attr">elementClick</span>: <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</div><div class="line">                    $state.go(<span class="string">'charts.partner_order_monitor_chart'</span>, &#123; <span class="attr">partnerCode</span>: e.data.x &#125;);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;,</div><div class="line">        <span class="attr">tooltip</span>: &#123;</div><div class="line">            <span class="attr">contentGenerator</span>: <span class="function"><span class="keyword">function</span>(<span class="params">d</span>) </span>&#123;<span class="comment">//自定义数据tip(鼠标移至数据图上的tip效果)</span></div><div class="line">                <span class="keyword">return</span> <span class="string">'&lt;h3&gt;'</span> + d.point.day + <span class="string">'&lt;/h3&gt;'</span> +</div><div class="line">                    <span class="string">'&lt;p&gt;成功：'</span> + d.point.y + <span class="string">'单，失败：&lt;strong style="color:red"&gt;'</span> + d.point.failedCount + <span class="string">'&lt;/strong&gt;单&lt;/p&gt;'</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;,</div><div class="line">        <span class="attr">legend</span>: &#123;<span class="comment">//图例标签的相关配置</span></div><div class="line">            dispatch: &#123;</div><div class="line">                <span class="attr">legendClick</span>: <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;<span class="comment">//图例点击方法回调，可以在这里做一些自定义事件处理，还有一系列其他事件回调legendDblclick,legendMouseover,legendMouseout,,stateChange等</span></div><div class="line">                    <span class="keyword">var</span> disabledLegend = orderMonitorStore.get(<span class="string">"historyDisabledLegend"</span>) ? orderMonitorStore.get(<span class="string">"historyDisabledLegend"</span>) : [];</div><div class="line">                    <span class="keyword">if</span> (e.disabled) &#123;</div><div class="line">                        disabledLegend.remove(e.key);</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        disabledLegend.push(e.key);</div><div class="line">                    &#125;</div><div class="line">                    orderMonitorStore.set(<span class="string">"historyDisabledLegend"</span>, disabledLegend);</div><div class="line">                    $scope.init(); <span class="comment">//触发重新绘制</span></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>图表数据,基本的数据格式如下<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$scope.data.push(&#123;</div><div class="line">    <span class="attr">key</span>: <span class="string">"数据key"</span>,</div><div class="line">    <span class="attr">values</span>: [&#123;<span class="attr">x</span>:x轴数据,<span class="attr">y</span>:y轴数据&#125;]</div><div class="line">    &#125;),</div><div class="line">    <span class="comment">//其他属性color,disabled等</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>这是我们项目中使用nvd3做出来的一些图表效果<br><img src="/2017/03/24/angularjs集成nvd3打造数据可视化/img1.png" alt="img1.png" title=""><br><img src="/2017/03/24/angularjs集成nvd3打造数据可视化/img2.png" alt="img2.png" title=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/24/angularjs集成echart/" rel="next" title="angularjs集成echart">
+                <i class="fa fa-chevron-left"></i> angularjs集成echart
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/24/angularjs集成smart-table/" rel="prev" title="angularjs集成smart-table">
+                angularjs集成smart-table <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="答案在风中" />
+          <p class="site-author-name" itemprop="name">答案在风中</p>
+           
+              <p class="site-description motion-element" itemprop="description">匠心</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/TimGuan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#NVD3-Re-usable-charts-for-d3-js"><span class="nav-number">1.</span> <span class="nav-text">NVD3 Re-usable charts for d3.js</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础依赖"><span class="nav-number">2.</span> <span class="nav-text">基础依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nvd3-angular使用"><span class="nav-number">3.</span> <span class="nav-text">nvd3+angular使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模板"><span class="nav-number">3.1.</span> <span class="nav-text">模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据"><span class="nav-number">3.2.</span> <span class="nav-text">数据</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">答案在风中</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "53d1ac2e2c33440383226e439c20a1aa",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("BT7aC5Gv8NiE4fa0r2KGORyl-gzGzoHsz", "WAsHCn555Qb2MF2XyHWvfHGx");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,996 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="angularjs,系统设计," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="错误码设计 接口报文设计1234567891011&amp;#123;    &quot;state&quot;: &amp;#123;        &quot;code&quot;: -2,//接口返回码        &quot;cost&quot;: 8,//接口响应时间        &quot;features&quot;: &quot;;aclPermissionName:demo;&quot;,//features,某些错误场景需要扩展信息以便处理，结构同服务端数据库features">
+<meta name="keywords" content="angularjs,系统设计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WEB系统前后端分离设计(一)--后端部分">
+<meta property="og:url" content="http://www.timguan.net/2017/03/24/WEB系统前后端分离设计-一-后端部分/index.html">
+<meta property="og:site_name" content="答案在风中的博客">
+<meta property="og:description" content="错误码设计 接口报文设计1234567891011&amp;#123;    &quot;state&quot;: &amp;#123;        &quot;code&quot;: -2,//接口返回码        &quot;cost&quot;: 8,//接口响应时间        &quot;features&quot;: &quot;;aclPermissionName:demo;&quot;,//features,某些错误场景需要扩展信息以便处理，结构同服务端数据库features">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/WEB系统前后端分离设计-一-后端部分/ssologin.jpg">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/WEB系统前后端分离设计-一-后端部分/ssologout.jpg">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/WEB系统前后端分离设计-一-后端部分/img1.png">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/WEB系统前后端分离设计-一-后端部分/img2.png">
+<meta property="og:updated_time" content="2017-04-01T15:12:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WEB系统前后端分离设计(一)--后端部分">
+<meta name="twitter:description" content="错误码设计 接口报文设计1234567891011&amp;#123;    &quot;state&quot;: &amp;#123;        &quot;code&quot;: -2,//接口返回码        &quot;cost&quot;: 8,//接口响应时间        &quot;features&quot;: &quot;;aclPermissionName:demo;&quot;,//features,某些错误场景需要扩展信息以便处理，结构同服务端数据库features">
+<meta name="twitter:image" content="http://www.timguan.net/2017/03/24/WEB系统前后端分离设计-一-后端部分/ssologin.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7HAIUMNUNC',
+      apiKey: '323ef222dba6ce48bd6f811f277ea482',
+      indexName: 'index of blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.timguan.net/2017/03/24/WEB系统前后端分离设计-一-后端部分/"/>
+
+
+
+
+
+  <title> WEB系统前后端分离设计(一)--后端部分 | 答案在风中的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">答案在风中的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">blowing in the wind</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.timguan.net/2017/03/24/WEB系统前后端分离设计-一-后端部分/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="答案在风中">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="答案在风中的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                WEB系统前后端分离设计(一)--后端部分
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-24T11:26:09+08:00">
+                2017-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/系统设计/" itemprop="url" rel="index">
+                    <span itemprop="name">系统设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/03/24/WEB系统前后端分离设计-一-后端部分/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/24/WEB系统前后端分离设计-一-后端部分/" class="leancloud_visitors" data-flag-title="WEB系统前后端分离设计(一)--后端部分">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="错误码设计"><a href="#错误码设计" class="headerlink" title="错误码设计"></a>错误码设计</h2><ul>
+<li>接口报文设计<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    <span class="string">"state"</span>: &#123;</div><div class="line">        <span class="string">"code"</span>: <span class="number">-2</span>,<span class="comment">//接口返回码</span></div><div class="line">        <span class="string">"cost"</span>: <span class="number">8</span>,<span class="comment">//接口响应时间</span></div><div class="line">        <span class="string">"features"</span>: <span class="string">";aclPermissionName:demo;"</span>,<span class="comment">//features,某些错误场景需要扩展信息以便处理，结构同服务端数据库features</span></div><div class="line">        <span class="string">"msg"</span>: <span class="string">"权限不足"</span>,<span class="comment">//错误提示</span></div><div class="line">        <span class="string">"systime"</span>: <span class="number">1488782151891</span>,<span class="comment">//请求时间点</span></div><div class="line">        <span class="string">"traceId"</span>: <span class="string">"0ab20a3b14887821518837557dadb2-143-1488782151883"</span><span class="comment">//traceId，同logback MDC中traceId</span></div><div class="line">    &#125;,</div><div class="line">    <span class="string">"content"</span>: &#123;&#125;<span class="comment">//接口返回内容</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li><p>后端错误码处理<br>扩展webx RenderResultAsJsonValve =&gt; spring mvc的话可以考虑扩展json view resolver</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JsonResponseValve</span> <span class="keyword">extends</span> <span class="title">RenderResultAsJsonValve</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(JsonResponseValve.class);</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> HttpServletRequest  request;</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> HttpServletResponse response;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TRACEID = <span class="string">"traceId"</span>;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">(PipelineContext pipelineContext)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</div><div class="line">        AbstractReturnCode abstractReturnCode = CommonReturnCode.SUCCESS;</div><div class="line">        String features = <span class="keyword">null</span>;</div><div class="line">        Object resultObject = <span class="keyword">null</span>;</div><div class="line">        String traceId = generateTraceId();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            MDC.put(TRACEID, traceId);</div><div class="line">            pipelineContext.invokeNext();</div><div class="line">            TurbineRunData rundata = getTurbineRunData(request);</div><div class="line">            <span class="keyword">if</span> (!rundata.isRedirected()) &#123;</div><div class="line">                resultObject = consumeInputValue(pipelineContext);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (ServiceRuntimeException serviceRuntimeException) &#123;</div><div class="line">            abstractReturnCode = serviceRuntimeException.getAbstractReturnCode();</div><div class="line">            features = serviceRuntimeException.getFeatures();</div><div class="line">            logger.error(<span class="string">"error code:"</span> + abstractReturnCode, serviceRuntimeException);</div><div class="line">        &#125; <span class="keyword">catch</span> (PipelineException pipelineException) &#123;</div><div class="line">            abstractReturnCode = CommonReturnCode.INTERNAL_ERROR;</div><div class="line">            <span class="keyword">if</span> (pipelineException.getCause() <span class="keyword">instanceof</span> WebxException) &#123;</div><div class="line">                WebxException webxException = (WebxException) pipelineException.getCause();</div><div class="line">                <span class="keyword">if</span> (webxException.getCause() <span class="keyword">instanceof</span> ModuleEventException) &#123;</div><div class="line">                    ModuleEventException moduleEventException = (ModuleEventException) webxException.getCause();</div><div class="line">                    <span class="keyword">if</span> (moduleEventException.getCause() <span class="keyword">instanceof</span> ServiceRuntimeException) &#123;</div><div class="line">                        ServiceRuntimeException serviceRuntimeException = (ServiceRuntimeException) moduleEventException</div><div class="line">                                .getCause();</div><div class="line">                        abstractReturnCode = serviceRuntimeException.getAbstractReturnCode();</div><div class="line">                        features = serviceRuntimeException.getFeatures();</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (moduleEventException.getCause() <span class="keyword">instanceof</span> ServiceException) &#123;</div><div class="line">                        ServiceException serviceException = (ServiceException) moduleEventException.getCause();</div><div class="line">                        abstractReturnCode = serviceException.getAbstractReturnCode();</div><div class="line">                        features = serviceException.getFeatures();</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            logger.error(<span class="string">"pipeline exception!"</span>, pipelineException);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            abstractReturnCode = CommonReturnCode.INTERNAL_ERROR;</div><div class="line">            logger.error(<span class="string">"unknow error!"</span>, e);</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            MDC.remove(TRACEID);</div><div class="line">            <span class="keyword">long</span> cost = System.currentTimeMillis() - start;</div><div class="line">            response.setContentType(getContentType());</div><div class="line">            PrintWriter out = response.getWriter();</div><div class="line">            ResponseWrapper responseWrapper = <span class="keyword">new</span> ResponseWrapper();</div><div class="line">            ResponseWrapper.State state = <span class="keyword">new</span> ResponseWrapper.State.Builder().code(abstractReturnCode)</div><div class="line">                    .systime(System.currentTimeMillis()).features(features).traceId(traceId).cost(cost).build();</div><div class="line">            responseWrapper.setState(state);</div><div class="line">            responseWrapper.setContent(resultObject);</div><div class="line">            out.print(JSON.toJSONString(responseWrapper));</div><div class="line">            ...</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>前端错误码处理<br>封装统一的请求处理模块，预先处理预定义的错误码，再返回promise</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">$http(&#123;</div><div class="line">    ...</div><div class="line">&#125;).then(<span class="function"><span class="keyword">function</span> <span class="title">successCallback</span>(<span class="params">response</span>) </span>&#123;</div><div class="line">    <span class="comment">// this callback will be called asynchronously</span></div><div class="line">    <span class="comment">// when the response is available</span></div><div class="line">    <span class="keyword">if</span> (response.data.state &amp;&amp; response.data.state.code == COMMON_RETURNCODE.PERMISSION_ERROR) &#123;</div><div class="line">        <span class="comment">//ACL权限申请</span></div><div class="line">        that.showAclApply(response);</div><div class="line">        def.reject(response.data);</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (response.data.state &amp;&amp; response.data.state.code != COMMON_RETURNCODE.SUCCESS) &#123;</div><div class="line">        ...<span class="comment">//异常处理</span></div><div class="line">        def.reject(response.data);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        def.resolve(response.data.content);</div><div class="line">    &#125;</div><div class="line">&#125;, <span class="function"><span class="keyword">function</span> <span class="title">errorCallback</span>(<span class="params">response</span>) </span>&#123;</div><div class="line">    ...</div><div class="line">    def.reject(response.data);</div><div class="line">&#125;);</div><div class="line"><span class="comment">//同步数据返回</span></div><div class="line"><span class="keyword">return</span> def.promise;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="SSO方案"><a href="#SSO方案" class="headerlink" title="SSO方案"></a>SSO方案</h2><img src="/2017/03/24/WEB系统前后端分离设计-一-后端部分/ssologin.jpg" alt="ssologin.jpg" title="">
+<img src="/2017/03/24/WEB系统前后端分离设计-一-后端部分/ssologout.jpg" alt="ssologout.jpg" title="">
+<h2 id="ACL方案"><a href="#ACL方案" class="headerlink" title="ACL方案"></a>ACL方案</h2><p>前后端分离架构，权限控制主要作用在后端接口上，通过接口授权、前端提示达到权限控制目的。</p>
+<ul>
+<li><p>接口权限声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Export</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="comment">//作用在webx action上,通过annotation指定访问的permission</span></div><div class="line">    <span class="meta">@Authorized</span>(permission = PermissionEnum.TEST)</div><div class="line">    <span class="function"><span class="keyword">public</span> List&lt;TkeExportRecordDO&gt; <span class="title">doGetExportRecord</span><span class="params">()</span> </span>&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>ACL配置<br>ACL授权体系 user &lt;=1:n=&gt; permission, role &lt;=1:n=&gt; permission, user &lt;=n:n=&gt; role</p>
+</li>
+<li><p>前端效果</p>
+<img src="/2017/03/24/WEB系统前后端分离设计-一-后端部分/img1.png" alt="img1.png" title="">
+</li>
+<li><p>实现细节<br>对比基于webx valve实现方案ACLValve和基于spring aop的ACLInterceptor,两者的实现原理都是通过在调用链上添加处理逻辑，valve是采用的类似Filter机制，aop采用编译期织入切面实现。两者实现原理的明显优缺点并不突出，不过webx并未提供很明确的解析方式用来检索到对应请求资源的permission，这一点采用AOP实现相对而言简单很多。<br>PS：webx3的module的action上集成spring aop存在低版本兼容问题，需要升级spring至3.2.8以上版本，具体原因参看[webx Module无法使用springAOP的问题解决思路]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ACLInterceptor</span> <span class="keyword">implements</span> <span class="title">MethodInterceptor</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(ACLInterceptor.class);</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> AccessControlService accessControlService;</div><div class="line">    <span class="meta">@Value</span>(<span class="string">"#&#123;constants['buc.acl.accesskey']&#125;"</span>)</div><div class="line">    <span class="keyword">private</span> String               bucAccessKey;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(MethodInvocation invocation)</span> <span class="keyword">throws</span> Throwable </span>&#123;</div><div class="line">        Method method = invocation.getMethod();</div><div class="line">        Authorized authorized = method.getAnnotation(Authorized.class);</div><div class="line">        <span class="keyword">if</span> (authorized != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">if</span> (checkAcl(authorized.permission().getPermission())) &#123;</div><div class="line">                <span class="keyword">return</span> invocation.proceed();</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ServiceRuntimeException(CommonReturnCode.PERMISSION_ERROR).features(</div><div class="line">                        CommonConst.ACL_PERMISSION_NAME_FEATURES_KEY + authorized.permission().getPermission());</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">return</span> invocation.proceed();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * ACL校验</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">checkAcl</span><span class="params">(String permission)</span> </span>&#123;</div><div class="line">        TFSupportContext.User user = TFSupportContext.getCurrentUser();</div><div class="line">        <span class="keyword">if</span> (user == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ServiceRuntimeException(CommonReturnCode.USER_NOTLOGIN_ERROR);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (StringUtils.isNotEmpty(permission)) &#123;</div><div class="line">            CheckPermissionsParam checkPermissionsParam = <span class="keyword">new</span> CheckPermissionsParam();</div><div class="line">            checkPermissionsParam.setUserId(user.getUserId());</div><div class="line">            List&lt;String&gt; permissions = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">            permissions.add(permission);</div><div class="line">            checkPermissionsParam.setPermissionNames(permissions);</div><div class="line">            checkPermissionsParam.setAccessKey(bucAccessKey);</div><div class="line">            CheckPermissionsResult result = <span class="keyword">null</span>;</div><div class="line">            result = accessControlService.checkPermissions(checkPermissionsParam);</div><div class="line">            <span class="keyword">if</span> (result != <span class="keyword">null</span> &amp;&amp; result.isSuccess() &amp;&amp; !CollectionUtils.isEmpty(result.getCheckPermissionResults())) &#123;</div><div class="line">                <span class="keyword">for</span> (CheckPermissionsResult.CheckPermissionResultInner checkPermissionDataResult : result</div><div class="line">                        .getCheckPermissionResults()) &#123;</div><div class="line">                    <span class="keyword">if</span> (!checkPermissionDataResult.isAccessible()) &#123;</div><div class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> ServiceRuntimeException(</div><div class="line">                                <span class="string">"access denied! userId:"</span> + user.getUserId() + <span class="string">" do not have permssion:"</span> + permission,</div><div class="line">                                CommonReturnCode.PERMISSION_ERROR).features(FeatureUtil.toString(</div><div class="line">                                FeatureUtil.putFirst(CommonConst.ACL_PERMISSION_NAME_FEATURES_KEY, permission)));</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                logger.error(<span class="string">"accessControlService.checkPermissions failed, check result is null or invalid! result:&#123;&#125;"</span>,</div><div class="line">                        result);</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ServiceRuntimeException(CommonReturnCode.ACL_CONFIG_ERROR);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ServiceRuntimeException(CommonReturnCode.ACL_CONFIG_ERROR);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>前端实现，建议封装统一的请求模块，对于类似权限不足这种系统层面的错误进行统一处理。以下是实现的部分代码片段:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line"><span class="comment">/**</span></div><div class="line"> * baserequest Module</div><div class="line"> *</div><div class="line"> * Description</div><div class="line"> */</div><div class="line">angular</div><div class="line">    .module(<span class="string">'inspinia'</span>)</div><div class="line">    .service(<span class="string">'BaseRequest'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">$http, $cookies, $q, $log, notify, featureUtil, ...</span>) </span>&#123;</div><div class="line">        ...</div><div class="line">        var Gateway = <span class="function"><span class="keyword">function</span>(<span class="params">options, data</span>) </span>&#123;</div><div class="line">            <span class="keyword">this</span>.options = options;</div><div class="line">            <span class="keyword">this</span>.init(data);</div><div class="line">        &#125;;</div><div class="line"></div><div class="line">        Gateway.prototype = &#123;</div><div class="line"></div><div class="line">            <span class="comment">/**</span></div><div class="line">             * api的定义需要被每个子类复写</div><div class="line">             * @type &#123;Object&#125;</div><div class="line">             */</div><div class="line">            api: &#123;&#125;,</div><div class="line">            ...</div><div class="line">            </div><div class="line">            <span class="comment">/**</span></div><div class="line">             * 申请权限</div><div class="line">             */</div><div class="line">            showAclApply: <span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</div><div class="line">                <span class="keyword">if</span> (response.data.state &amp;&amp; response.data.state.code == COMMON_RETURNCODE.PERMISSION_ERROR &amp;&amp; response.data.state.features) &#123;</div><div class="line">                    <span class="keyword">var</span> permission = featureUtil.getValueByKey(response.data.state.features, COMMON_CONST.ACL_PERMISSION_NAME_FEATURES_KEY);</div><div class="line">                    <span class="keyword">var</span> applyHref = CONST_ACL_APPLY_LINK + permission;</div><div class="line">                    notify(&#123;</div><div class="line">                        <span class="attr">messageTemplate</span>: <span class="string">'&lt;div&gt;您缺少'</span> + permission +</div><div class="line">                            <span class="string">'权限,部分功能将无法正常使用.&lt;a href='</span> + applyHref + <span class="string">' target="_blank"&gt;[点我申请]&lt;/a&gt;&lt;/div&gt;'</span>,</div><div class="line">                        <span class="attr">classes</span>: <span class="string">'alert-danger'</span>,</div><div class="line">                        <span class="attr">templateUrl</span>: CONST_NOTIFY_TPL</div><div class="line">                    &#125;);</div><div class="line">                &#125;</div><div class="line">            &#125;,</div><div class="line">            <span class="comment">/**</span></div><div class="line">             * @function request</div><div class="line">             * @param  &#123;Map&#125;     data             请求参数</div><div class="line">             * @param  &#123;Boolean&#125; isForceUserLogin 是否需要强制登陆</div><div class="line">             * @param  &#123;boolean&#125; cms</div><div class="line">             * @return &#123;can.Deferred&#125;</div><div class="line">             */</div><div class="line">            request: <span class="function"><span class="keyword">function</span>(<span class="params">data, isForceUserLogin</span>) </span>&#123;</div><div class="line">                <span class="keyword">var</span> def = $q.defer();</div><div class="line">                <span class="keyword">var</span> that = <span class="keyword">this</span>;</div><div class="line">                <span class="comment">// https://docs.angularjs.org/api/ng/service/$http</span></div><div class="line">                <span class="comment">// $http 接受的配置项有：</span></div><div class="line">                <span class="comment">// method 方法</span></div><div class="line">                <span class="comment">// url 路径</span></div><div class="line">                <span class="comment">// params GET请求的参数</span></div><div class="line">                <span class="comment">// data post请求的参数</span></div><div class="line">                <span class="comment">// headers 头</span></div><div class="line">                <span class="comment">// transformRequest 请求预处理函数</span></div><div class="line">                <span class="comment">// transformResponse 响应预处理函数</span></div><div class="line">                <span class="comment">// cache 缓存</span></div><div class="line">                <span class="comment">// timeout 超时毫秒，超时的请求会被取消</span></div><div class="line">                <span class="comment">// withCredentials 跨域安全策略的一个东西</span></div><div class="line">                $http(&#123;</div><div class="line">                    <span class="attr">method</span>: <span class="keyword">this</span>.options.api.HTTP_METHOD ? <span class="keyword">this</span>.options.api.HTTP_METHOD : <span class="string">'POST'</span>,</div><div class="line">                    <span class="attr">url</span>: <span class="keyword">this</span>.options.api.PATH ? (CONST_REQUEST_URL + <span class="keyword">this</span>.options.api.PATH) : CONST_REQUEST_URL,</div><div class="line">                    <span class="attr">params</span>: <span class="keyword">this</span>.options.api.HTTP_METHOD === <span class="string">"GET"</span> ? data : <span class="string">''</span>,</div><div class="line">                    <span class="attr">data</span>: <span class="keyword">this</span>.options.api.HTTP_METHOD === <span class="string">"POST"</span> ? data : <span class="string">''</span>,</div><div class="line">                    <span class="attr">cache</span>: <span class="literal">false</span>,</div><div class="line">                    <span class="attr">timeout</span>: <span class="number">15000</span></div><div class="line">                &#125;).then(<span class="function"><span class="keyword">function</span> <span class="title">successCallback</span>(<span class="params">response</span>) </span>&#123;</div><div class="line">                    <span class="comment">// this callback will be called asynchronously</span></div><div class="line">                    <span class="comment">// when the response is available</span></div><div class="line">                    <span class="keyword">if</span> (response.data.state &amp;&amp; response.data.state.code == COMMON_RETURNCODE.PERMISSION_ERROR) &#123;</div><div class="line">                        <span class="comment">//ACL权限申请</span></div><div class="line">                        that.showAclApply(response);</div><div class="line">                        def.reject(response.data);</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (response.data.state &amp;&amp; response.data.state.code != COMMON_RETURNCODE.SUCCESS) &#123;</div><div class="line">                        ...</div><div class="line">                        def.reject(response.data);</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        def.resolve(response.data.content);</div><div class="line">                    &#125;</div><div class="line">                &#125;, <span class="function"><span class="keyword">function</span> <span class="title">errorCallback</span>(<span class="params">response</span>) </span>&#123;</div><div class="line">                    <span class="comment">// called asynchronously if an error occurs</span></div><div class="line">                    <span class="comment">// or server returns response with an error status.</span></div><div class="line">                    ...</div><div class="line">                    def.reject(response.data);</div><div class="line">                &#125;);</div><div class="line">                <span class="comment">//同步数据返回</span></div><div class="line">                <span class="keyword">return</span> def.promise;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> Gateway;</div><div class="line">    &#125;)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="通用模块"><a href="#通用模块" class="headerlink" title="通用模块"></a>通用模块</h2><h3 id="excel导出"><a href="#excel导出" class="headerlink" title="excel导出"></a>excel导出</h3><img src="/2017/03/24/WEB系统前后端分离设计-一-后端部分/img2.png" alt="img2.png" title="">
+<p>前端同步提交导出任务，异步loop+batchget方式获取数据回写oss private bucket；前端loop获取任务状态以及下载地址；</p>
+<ul>
+<li><p>前端</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> - 数据导出</div><div class="line"> - @return &#123;[type]&#125; [description]</div><div class="line"> */</div><div class="line">$scope.export = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">...</div><div class="line">    var request = <span class="keyword">new</span> BaseRequest(export_failed_lockseats, &#123;</div><div class="line">        <span class="attr">startTime</span>: moment($scope.startTime).format(<span class="string">"YYYY-MM-DD HH:mm"</span>),</div><div class="line">        <span class="attr">endTime</span>: moment($scope.endTime).format(<span class="string">"YYYY-MM-DD HH:mm"</span>)</div><div class="line">    &#125;);</div><div class="line">    request.sendRequest()</div><div class="line">        .then(<span class="function"><span class="keyword">function</span>(<span class="params">lastExportRecordId</span>) </span>&#123;</div><div class="line">            <span class="comment">//使用localstorage存储最近一次导出的任务ID,再次进入页面时用来获取任务的执行状况</span></div><div class="line">            orderMonitorStore.set(<span class="string">"lastExportRecordIdOfFailedLockSeats"</span>, lastExportRecordId);</div><div class="line">            loopCheckStatus(lastExportRecordId);</div><div class="line">        &#125;, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">            <span class="built_in">console</span>.log(data);</div><div class="line">            $scope.isExporting = <span class="literal">false</span>;</div><div class="line">        &#125;);</div><div class="line">    <span class="comment">//loop检查任务执行状况，TODO 提升封装性</span></div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">loopCheckStatus</span>(<span class="params">lastExportRecordId</span>) </span>&#123;</div><div class="line">            <span class="keyword">var</span> loopCount = <span class="number">0</span>;</div><div class="line">            <span class="keyword">var</span> nIntervId = setInterval(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                <span class="keyword">if</span> (loopCount &lt; <span class="number">100</span> &amp;&amp; (!$scope.lastExportStatus || $scope.lastExportStatus == <span class="string">'EXPORTING'</span>)) &#123;</div><div class="line">                    commonService.getExportRecord(lastExportRecordId)</div><div class="line">                        .then(<span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">                            <span class="keyword">if</span> (data) &#123;</div><div class="line">                                $scope.lastExportStatus = data[<span class="number">0</span>].status;</div><div class="line">                                $scope.lastExportName = data[<span class="number">0</span>].fileName;</div><div class="line">                                <span class="keyword">if</span> (<span class="string">'FINISH'</span> === $scope.lastExportStatus) &#123;</div><div class="line">                                    $scope.lastExportDownloadUrl = data[<span class="number">0</span>].downloadUrl;</div><div class="line">                                &#125;</div><div class="line">                            &#125;</div><div class="line">                            loopCount++;</div><div class="line">                            $scope.lastExportProcess = $scope.lastExportStatus != <span class="string">'EXPORTING'</span> ?</div><div class="line">                                <span class="number">100</span> : ((loopCount % <span class="number">10</span>) * <span class="number">10</span> + <span class="number">10</span>);</div><div class="line">                        &#125;, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">                            $scope.lastExportStatus = <span class="string">"FAILED"</span>;</div><div class="line">                        &#125;);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    $scope.$apply(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; $scope.lastExportProcess = <span class="number">100</span> &#125;);</div><div class="line">                    clearInterval(nIntervId);</div><div class="line">                &#125;</div><div class="line">            &#125;, <span class="number">1000</span>);</div><div class="line">        &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</li>
+<li><p>服务端<br>不同业务声明对于的数据加载逻辑</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IDataCollect</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> List&lt;T&gt; <span class="title">execute</span><span class="params">(Long maxId, Integer pageSize)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Long <span class="title">getId</span><span class="params">(T element)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">sizeOfLimit</span><span class="params">()</span></span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> Long <span class="title">exportFailedLockSeats</span><span class="params">(<span class="keyword">final</span> Date beginTime, <span class="keyword">final</span> Date endTime, <span class="keyword">final</span> Long cinemaId)</span> </span>&#123;</div><div class="line">...</div><div class="line"><span class="keyword">return</span> excelExportService.exportExcel(fileName, Constant.ExportBizType.FAILED_LOCKSEATS_DETAIL, <span class="keyword">false</span>,</div><div class="line">        <span class="keyword">new</span> ExcelExportServiceImpl.IDataCollect&lt;TkeFailedLockSeatsStatisticsDO&gt;() &#123;</div><div class="line">            <span class="comment">//单次batch get</span></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> List&lt;TkeFailedLockSeatsStatisticsDO&gt; <span class="title">execute</span><span class="params">(Long maxId, Integer pageSize)</span> </span>&#123;</div><div class="line">                <span class="keyword">return</span> tkeFailedLockSeatsStatisticsDao</div><div class="line">                        .batchGetFailedLockSeatsStatistics(beginTime, endTime, cinemaId, maxId, pageSize);</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//游标</span></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">getId</span><span class="params">(TkeFailedLockSeatsStatisticsDO element)</span> </span>&#123;</div><div class="line">                <span class="keyword">return</span> element.getId();</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//batch get size</span></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> Integer <span class="title">sizeOfLimit</span><span class="params">()</span> </span>&#123;</div><div class="line">                <span class="keyword">return</span> <span class="number">1000</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;, excelColumnHeaders, excelColumnNames);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可复用的任务提交模块</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Service</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExcelExportServiceImpl</span></span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 增量读数据库，全量写excel*</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> &lt;T&gt; <span class="function">Long <span class="title">exportExcel</span><span class="params">(...)</span> </span>&#123;</div><div class="line">        ...</div><div class="line">        <span class="comment">//记录导出任务的任务编号</span></div><div class="line">        Long id = exportRecordDao.addTkeExportRecord(tkeExportRecordDO);</div><div class="line">        <span class="comment">//提交任务，异步执行</span></div><div class="line">        threadPoolTaskExecutor.execute(</div><div class="line">                <span class="keyword">new</span> ExportExcelExecutor(name, empId, nickNameCn, id, <span class="keyword">false</span>, Constant.EXPORT_EXPIRE_SECONDS, dataCollect,</div><div class="line">                        headers, fields));</div><div class="line">        <span class="keyword">return</span> id;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可复用excel导出的任务执行逻辑，ps:excel支持的数据量在万级，如果数据量过大，建议采用拆分excel再合并成zip包的方式进行导出。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">    * 异步导出</div><div class="line">    */</div><div class="line">   <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ExportExcelExecutor</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line">       <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(ExportExcelExecutor.class);</div><div class="line">       String                              name;</div><div class="line">       Long                                exportRecordId;</div><div class="line">       Integer                             expireSeconds;</div><div class="line">       String[]                            headers;</div><div class="line">       String[]                            fields;</div><div class="line">       ExcelExportServiceImpl.IDataCollect dataCollect;</div><div class="line"></div><div class="line">       ExportExcelExecutor(String name, String empId, String nickName, Long exportRecordId, Boolean isPublic,</div><div class="line">                           Integer expireSeconds, ExcelExportServiceImpl.IDataCollect dataCollect, String[] headers,</div><div class="line">                           String[] fields) &#123;</div><div class="line">           <span class="keyword">this</span>.name = name;</div><div class="line">           <span class="keyword">this</span>.exportRecordId = exportRecordId;</div><div class="line">           <span class="keyword">this</span>.dataCollect = dataCollect;</div><div class="line">           <span class="keyword">this</span>.headers = headers;<span class="comment">//excel表头</span></div><div class="line">           <span class="keyword">this</span>.fields = fields;<span class="comment">//需要记入表格的对象属性</span></div><div class="line">           <span class="keyword">this</span>.expireSeconds = expireSeconds;<span class="comment">//私有bucket有效期</span></div><div class="line">       &#125;</div><div class="line"></div><div class="line">       <span class="meta">@Override</span></div><div class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">           Integer pageSize = dataCollect.sizeOfLimit();</div><div class="line">           Long maxId = <span class="number">0L</span>;</div><div class="line">           ByteArrayOutputStream outputStream = <span class="keyword">null</span>;</div><div class="line">           <span class="keyword">try</span> &#123;</div><div class="line">               <span class="keyword">boolean</span> hasMore = <span class="keyword">true</span>;</div><div class="line">               <span class="keyword">final</span> List datas = <span class="keyword">new</span> ArrayList();</div><div class="line">               <span class="keyword">while</span> (hasMore) &#123;</div><div class="line">                   List records = dataCollect.execute(maxId, pageSize);</div><div class="line">                   <span class="keyword">if</span> (records != <span class="keyword">null</span> &amp;&amp; records.size() != <span class="number">0</span>) &#123;</div><div class="line">                       maxId = dataCollect.getId(records.get(records.size() - <span class="number">1</span>));</div><div class="line">                       datas.addAll(records);</div><div class="line">                       <span class="keyword">if</span> (datas.size() &gt;= MAX_RECORD_SIZE_IN_SINGLE_EXCEL) &#123;</div><div class="line">                           <span class="comment">//最多允许导出1w条数据，避免数据量过载</span></div><div class="line">                           logger.warn(<span class="string">"excel is too large, export abort,name:&#123;&#125;,exportRecordId:&#123;&#125;"</span>, name,</div><div class="line">                                   exportRecordId);</div><div class="line">                           <span class="keyword">break</span>;</div><div class="line">                       &#125;</div><div class="line">                   &#125;</div><div class="line">                   <span class="keyword">if</span> (records == <span class="keyword">null</span> || records.size() &lt; pageSize) &#123;</div><div class="line">                       hasMore = <span class="keyword">false</span>;</div><div class="line">                   &#125;</div><div class="line">               &#125;</div><div class="line">               <span class="comment">//执行excel导出</span></div><div class="line">               ...</div><div class="line">               ExcelUtil.export2Excel(exportSetInfo);</div><div class="line">               <span class="keyword">byte</span>[] bytes = outputStream.toByteArray();</div><div class="line">               OssServiceImpl.UploadResult uploadResult = <span class="keyword">null</span>;</div><div class="line">               <span class="keyword">if</span> (bytes != <span class="keyword">null</span>) &#123;</div><div class="line">                   <span class="comment">//写oss </span></div><div class="line">                   uploadResult = ossService.uploadFile(name + Constant.EXCEL_FILE_SUFFIX, expireSeconds,</div><div class="line">                           Constant.EXCEL_CONTENT_TYPE, bytes);</div><div class="line">               &#125;</div><div class="line">               TkeExportRecordDO tkeExportRecordDO = <span class="keyword">new</span> TkeExportRecordDO();</div><div class="line">               tkeExportRecordDO.setId(exportRecordId);</div><div class="line">               <span class="keyword">if</span> (uploadResult != <span class="keyword">null</span>) &#123;</div><div class="line">                   tkeExportRecordDO.setStatus(ExportStatus.FINISH.toString());</div><div class="line">                   tkeExportRecordDO.setDownloadUrl(uploadResult.getDownloadUrl());</div><div class="line">                   ...</div><div class="line">               &#125; <span class="keyword">else</span> &#123;</div><div class="line">                   ...</div><div class="line">                   tkeExportRecordDO.setStatus(ExportStatus.FAILED.toString());</div><div class="line">               &#125;</div><div class="line">               exportRecordDao.updateTkeExportRecord(tkeExportRecordDO);</div><div class="line">           &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">               ...</div><div class="line">           &#125; <span class="keyword">finally</span> &#123;</div><div class="line">               ...</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h3 id="预警事件"><a href="#预警事件" class="headerlink" title="预警事件"></a>预警事件</h3><p>通过spring event，解耦了预警事件的判断发送等环节。<br>1.数据任务,触发ALARM_EVENT<br>=&gt;2.执行alarm判断逻辑,判断是否需要触发ALARM_MSG_EVENT<br>=&gt;3.发送alarm消息<br>其中2、3部可采用异步方式执行，避免预警等后置动作阻塞数据任务执行；<br>spring配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--预警异步处理线程池--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"alarmThreadPoolTaskExecutor"</span> <span class="attr">class</span>=<span class="string">"org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"corePoolSize"</span> <span class="attr">value</span>=<span class="string">"5"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"keepAliveSeconds"</span> <span class="attr">value</span>=<span class="string">"300"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span> <span class="attr">value</span>=<span class="string">"30"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"queueCapacity"</span> <span class="attr">value</span>=<span class="string">"10000"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"rejectedExecutionHandler"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">task:annotation-driven</span> <span class="attr">executor</span>=<span class="string">"alarmThreadPoolTaskExecutor"</span> <span class="attr">proxy-target-class</span>=<span class="string">"true"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<p>事件触发</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">LockSeatsAlarmMsgSendEvent lockSeatsAlarmMsgSendEvent = <span class="keyword">new</span> LockSeatsAlarmMsgSendEvent(</div><div class="line">        getClass().getName());</div><div class="line">...</div><div class="line">applicationContext.publishEvent(lockSeatsAlarmMsgSendEvent);</div></pre></td></tr></table></figure>
+<p>注册事件监听</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 预警通知发送事件监听</div><div class="line"> * <span class="doctag">@author</span> - zhupin(kaiqiang.gkq@alibaba-inc.com)</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LockSeatsAlarmMsgSendEventListener</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">LockSeatsAlarmMsgSendEvent</span>&gt; </span>&#123;</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> MessageServiceImpl messageService;</div><div class="line">    <span class="comment">//异步执行</span></div><div class="line">    <span class="meta">@Async</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(LockSeatsAlarmMsgSendEvent lockSeatsAlarmEvent)</span> </span>&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/angularjs/" rel="tag"># angularjs</a>
+          
+            <a href="/tags/系统设计/" rel="tag"># 系统设计</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/24/WEB系统前后端分离设计-二-前端部分/" rel="next" title="WEB系统前后端分离设计(二)--前端部分">
+                <i class="fa fa-chevron-left"></i> WEB系统前后端分离设计(二)--前端部分
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="答案在风中" />
+          <p class="site-author-name" itemprop="name">答案在风中</p>
+           
+              <p class="site-description motion-element" itemprop="description">匠心</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/TimGuan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#错误码设计"><span class="nav-number">1.</span> <span class="nav-text">错误码设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSO方案"><span class="nav-number">2.</span> <span class="nav-text">SSO方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ACL方案"><span class="nav-number">3.</span> <span class="nav-text">ACL方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用模块"><span class="nav-number">4.</span> <span class="nav-text">通用模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#excel导出"><span class="nav-number">4.1.</span> <span class="nav-text">excel导出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预警事件"><span class="nav-number">4.2.</span> <span class="nav-text">预警事件</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">答案在风中</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "53d1ac2e2c33440383226e439c20a1aa",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("BT7aC5Gv8NiE4fa0r2KGORyl-gzGzoHsz", "WAsHCn555Qb2MF2XyHWvfHGx");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

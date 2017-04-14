@@ -1,0 +1,966 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="angularjs,inspinia,smart-table," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Smart-Tablesmart-table是一款高效的表格利器,在github上也是千star的项目,在分页、排序、检索等表格常用操作的支持上封装做的相当优秀，使用也相当简单。源码地址,入门示例。">
+<meta name="keywords" content="angularjs,inspinia,smart-table">
+<meta property="og:type" content="article">
+<meta property="og:title" content="angularjs集成smart-table">
+<meta property="og:url" content="http://www.timguan.net/2017/03/24/angularjs集成smart-table/index.html">
+<meta property="og:site_name" content="答案在风中的博客">
+<meta property="og:description" content="Smart-Tablesmart-table是一款高效的表格利器,在github上也是千star的项目,在分页、排序、检索等表格常用操作的支持上封装做的相当优秀，使用也相当简单。源码地址,入门示例。">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/angularjs集成smart-table/img1.png">
+<meta property="og:image" content="http://www.timguan.net/2017/03/24/angularjs集成smart-table/img2.png">
+<meta property="og:updated_time" content="2017-04-01T15:12:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="angularjs集成smart-table">
+<meta name="twitter:description" content="Smart-Tablesmart-table是一款高效的表格利器,在github上也是千star的项目,在分页、排序、检索等表格常用操作的支持上封装做的相当优秀，使用也相当简单。源码地址,入门示例。">
+<meta name="twitter:image" content="http://www.timguan.net/2017/03/24/angularjs集成smart-table/img1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7HAIUMNUNC',
+      apiKey: '323ef222dba6ce48bd6f811f277ea482',
+      indexName: 'index of blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.timguan.net/2017/03/24/angularjs集成smart-table/"/>
+
+
+
+
+
+  <title> angularjs集成smart-table | 答案在风中的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">答案在风中的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">blowing in the wind</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.timguan.net/2017/03/24/angularjs集成smart-table/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="答案在风中">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="答案在风中的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                angularjs集成smart-table
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-24T11:53:02+08:00">
+                2017-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/angularjs/" itemprop="url" rel="index">
+                    <span itemprop="name">angularjs</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/03/24/angularjs集成smart-table/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/24/angularjs集成smart-table/" class="leancloud_visitors" data-flag-title="angularjs集成smart-table">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Smart-Table"><a href="#Smart-Table" class="headerlink" title="Smart-Table"></a>Smart-Table</h1><p>smart-table是一款高效的表格利器,在github上也是千star的项目,在分页、排序、检索等表格常用操作的支持上封装做的相当优秀，使用也相当简单。<a href="https://github.com/lorenzofox3/Smart-Table" target="_blank" rel="external">源码地址</a>,<a href="http://lorenzofox3.github.io/smart-table-website/" target="_blank" rel="external">入门示例</a>。<br><a id="more"></a></p>
+<h1 id="基础依赖"><a href="#基础依赖" class="headerlink" title="基础依赖"></a>基础依赖</h1><p>angularjs 1.0.0^,bootstrap 3.2.0^,smart-table<br>注册依赖<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">angular.module(<span class="string">'inspinia'</span>,[<span class="string">'smart-table'</span>...])...</div></pre></td></tr></table></figure></p>
+<h1 id="smart-table使用"><a href="#smart-table使用" class="headerlink" title="smart-table使用"></a>smart-table使用</h1><h2 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h2><h3 id="基础使用"><a href="#基础使用" class="headerlink" title="基础使用"></a>基础使用</h3><ul>
+<li>1.st-pipe=”callServer”数据回调函数，表格初始化以及分页获取数据的函数封装；</li>
+<li>2.st-table=”rowCollection”数据节点，我理解这个也定义smart-table的作用范围，因为callServer等交互行为触发的变化应当仅在该容器内，类似于table的闭包；</li>
+<li>3.数据行<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">tr</span> <span class="attr">ng-repeat</span>=<span class="string">"row in rowCollection"</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">st-items-by-page</span>=<span class="string">"20"</span> <span class="attr">st-pagination</span>=<span class="string">""</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>st-pagination分页标记，st-item-by-page用于指定数据页大小， st-template=”/views/common/pagination_custom.html”自定义分页模板设置<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--分页模板--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span><span class="undefined"></span></div><div class="line">.pagination&#123;</div><div class="line">    margin: 10px 0;</div><div class="line">&#125;</div><div class="line">.pagination li a input &#123;</div><div class="line">  padding: 0;</div><div class="line">  margin: -5px 0;</div><div class="line">&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">nav</span> <span class="attr">ng-if</span>=<span class="string">"pages.length &gt;= 2"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"pagination pull-left"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">ng-click</span>=<span class="string">"selectPage(1)"</span>&gt;</span>First<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">ng-click</span>=<span class="string">"selectPage(currentPage - 1)"</span>&gt;</span>pre<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">a</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">page-select</span>&gt;</span><span class="tag">&lt;/<span class="name">page-select</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">ng-click</span>=<span class="string">"selectPage(currentPage + 1)"</span>&gt;</span>next<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">nav</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h3 id="终端适配"><a href="#终端适配" class="headerlink" title="终端适配"></a>终端适配</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">th</span> <span class="attr">device-switch-sytle</span> <span class="attr">mobile-class</span>=<span class="string">"ng-hide"</span>&gt;</span>请求地址<span class="tag">&lt;/<span class="name">th</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>device-switch-sytle是我自己扩展的用于不同终端适配的directive,pc和mobile在打开相同页面在某些dom上进行差异化处理；<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">angular</div><div class="line">    .module(<span class="string">'inspinia'</span>)</div><div class="line">    .directive(<span class="string">'deviceSwitchSytle'</span>, [<span class="string">"deviceDetector"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">deviceDetector</span>) </span>&#123;<span class="comment">//浏览器终端识别http://srfrnk.github.io/ng-device-detector/</span></div><div class="line">        <span class="comment">//不同终端样式定制</span></div><div class="line">        <span class="keyword">return</span> &#123;</div><div class="line">            <span class="attr">restrict</span>: <span class="string">"A"</span>,</div><div class="line">            <span class="attr">link</span>: <span class="function"><span class="keyword">function</span>(<span class="params">scope, elm, attrs</span>) </span>&#123;</div><div class="line">                <span class="keyword">var</span> styles, clazz;</div><div class="line">                <span class="keyword">if</span> (deviceDetector.isMobile()) &#123;</div><div class="line">                    clazz = attrs[<span class="string">"mobileClass"</span>];</div><div class="line">                    styles = attrs[<span class="string">"mobileStyle"</span>];</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    clazz = attrs[<span class="string">"pcClass"</span>];</div><div class="line">                    styles = attrs[<span class="string">"pcStyle"</span>];</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (clazz) &#123;</div><div class="line">                    elm.addClass(clazz);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (styles &amp;&amp; styles.length &gt; <span class="number">0</span>) &#123;</div><div class="line">                    styles.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">style</span>) </span>&#123;</div><div class="line">                        <span class="keyword">var</span> kv = style.split(<span class="string">":"</span>);</div><div class="line">                        <span class="keyword">if</span> (kv &amp;&amp; kv.length == <span class="number">2</span>) &#123;</div><div class="line">                            elm.css(kv[<span class="number">0</span>], kv[<span class="number">1</span>]);</div><div class="line">                        &#125;</div><div class="line">                    &#125;);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">    &#125;]);</div></pre></td></tr></table></figure></p>
+<h3 id="bootstrap-table"><a href="#bootstrap-table" class="headerlink" title="bootstrap table"></a>bootstrap table</h3><p>对于数据内容不确定最好选择table-responsiver,进行内容自适配;table样式可用选项table table-bordered(带border) table-striped(斑马效果) table-hover(自带hover效果);</p>
+<h3 id="filter-search"><a href="#filter-search" class="headerlink" title="filter search"></a>filter search</h3><p><a href="http://lorenzofox3.github.io/smart-table-website/#section-filter" target="_blank" rel="external">filter search相关</a></p>
+<h3 id="完整模板"><a href="#完整模板" class="headerlink" title="完整模板"></a>完整模板</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"table-responsiver row"</span> <span class="attr">st-pipe</span>=<span class="string">"callServer"</span> <span class="attr">st-table</span>=<span class="string">"rowCollection"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"col-md-12"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">table</span> <span class="attr">class</span>=<span class="string">"table table-bordered table-striped table-hover"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">thead</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">tr</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">th</span>&gt;</span>ID<span class="tag">&lt;/<span class="name">th</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">th</span>&gt;</span>调用时间<span class="tag">&lt;/<span class="name">th</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">th</span>&gt;</span>调用耗时(ms)<span class="tag">&lt;/<span class="name">th</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">th</span>&gt;</span>状态<span class="tag">&lt;/<span class="name">th</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">th</span> <span class="attr">device-switch-sytle</span> <span class="attr">mobile-class</span>=<span class="string">"ng-hide"</span>&gt;</span>请求地址<span class="tag">&lt;/<span class="name">th</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">thead</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">tbody</span> <span class="attr">ng-if</span>=<span class="string">"!isLoading"</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">tr</span> <span class="attr">ng-repeat</span>=<span class="string">"row in rowCollection"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span></div><div class="line">                        <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">ng-click</span>=<span class="string">"showDetail(row)"</span> <span class="attr">class</span>=<span class="string">"btn btn-sm btn-success"</span>&gt;</span></div><div class="line">                            <span class="tag">&lt;<span class="name">span</span> <span class="attr">device-switch-sytle</span> <span class="attr">mobile-class</span>=<span class="string">"ng-hide"</span>&gt;</span>&#123;&#123; row.id &#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-folder-open-o"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">                        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; row.gmtCreate | date : 'yyyy-MM-dd HH:mm:ss' &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; row.time &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"badge"</span> <span class="attr">ng-class</span>=<span class="string">"&#123;true:'badge-primary',false:'badge-danger'&#125;[(row.exception||'')==='']"</span>&gt;</span>&#123;&#123;((row.exception||'')==='')?"success":"failed"&#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">td</span> <span class="attr">device-switch-sytle</span> <span class="attr">mobile-class</span>=<span class="string">"ng-hide"</span>&gt;</span></div><div class="line">                        <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&#123;&#123;row.url&#125;&#125;"</span> <span class="attr">target</span>=<span class="string">"_blank"</span> <span class="attr">ng-if</span>=<span class="string">"row.url"</span> <span class="attr">alt</span>=<span class="string">"&#123;&#123;row.url&#125;&#125;"</span>&gt;</span></div><div class="line">                            <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-link"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span> &#123;&#123;row.url|cut:true:100:' ...'&#125;&#125;</div><div class="line">                        <span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">                        <span class="tag">&lt;<span class="name">a</span> <span class="attr">ng-if</span>=<span class="string">"row.request"</span> <span class="attr">alt</span>=<span class="string">"&#123;&#123;row.url&#125;&#125;"</span>&gt;</span></div><div class="line">                            <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-unlink"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span> &#123;&#123;row.request|cut:true:100:' ...'&#125;&#125;</div><div class="line">                        <span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">tbody</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">tbody</span> <span class="attr">ng-if</span>=<span class="string">"isLoading"</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">tr</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">td</span> <span class="attr">colspan</span>=<span class="string">"5"</span>&gt;</span></div><div class="line">                        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"spiner-example"</span>&gt;</span></div><div class="line">                            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"sk-spinner sk-spinner-wave"</span>&gt;</span></div><div class="line">                                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"sk-rect1"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"sk-rect2"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"sk-rect3"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"sk-rect4"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"sk-rect5"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">tbody</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">table</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"col-md-12"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">st-items-by-page</span>=<span class="string">"20"</span> <span class="attr">st-pagination</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="数据获取"><a href="#数据获取" class="headerlink" title="数据获取"></a>数据获取</h2><p>smart-table没有过多干涉table的数据渲染，而是通过设定数据回调函数，通过分页插件触发数据回调函数进行数据变更，所以使用上还是很容易的。</p>
+<h3 id="数据初始化及分页"><a href="#数据初始化及分页" class="headerlink" title="数据初始化及分页"></a>数据初始化及分页</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 服务器数据获取回调函数 st-pipe</div><div class="line"> * @param  &#123;[type]&#125; tableState table状态信息封装，分页等信息</div><div class="line"> * @return &#123;[type]&#125;            [description]</div><div class="line"> */</div><div class="line">$scope.callServer = function(tableState) &#123;</div><div class="line">    $scope.isLoading = true;</div><div class="line">    var start = 0; // This is NOT the page number, but the index of item in the list that you want to use to display the table.</div><div class="line">    var number = 20; // Number of entries showed per page.st-items-by-page=&quot;20&quot;</div><div class="line">    if (tableState) &#123;</div><div class="line">        var pagination = tableState.pagination;</div><div class="line">        start = pagination.start || 0;</div><div class="line">        number = pagination.number || 20;</div><div class="line">        pagination.numberOfPages = 200; //set the number of pages so the pagination can update</div><div class="line">    &#125;</div><div class="line">    //my request</div><div class="line">    var request = new BaseRequest(syslog_tfbackyard_digest, &#123;</div><div class="line">        &apos;date&apos;: $scope.selectedLogDate,</div><div class="line">        &apos;partner&apos;: $scope.selectedPartner,</div><div class="line">        &apos;cinema&apos;: $scope.inputCinemaId,</div><div class="line">        &apos;bizcode&apos;: $scope.selectedBizCode,</div><div class="line">        &apos;pageindex&apos;: start / number,</div><div class="line">        &apos;pagesize&apos;: number</div><div class="line">    &#125;);</div><div class="line">    request.sendRequest()</div><div class="line">        .then(function(data) &#123;</div><div class="line">            //数据回调</div><div class="line">            $scope.rowCollection = data;</div><div class="line">            $scope.isLoading = false;</div><div class="line">        &#125;, function(data) &#123;</div><div class="line">            console.log(data);</div><div class="line">            $scope.isLoading = false;</div><div class="line">        &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>##实现效果<br>PC效果<br><img src="/2017/03/24/angularjs集成smart-table/img1.png" alt="img1.png" title=""><br>移动端适配后效果<br><img src="/2017/03/24/angularjs集成smart-table/img2.png" alt="img2.png" title=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/angularjs/" rel="tag"># angularjs</a>
+          
+            <a href="/tags/inspinia/" rel="tag"># inspinia</a>
+          
+            <a href="/tags/smart-table/" rel="tag"># smart-table</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/24/angularjs集成nvd3打造数据可视化/" rel="next" title="angularjs集成nvd3打造数据可视化">
+                <i class="fa fa-chevron-left"></i> angularjs集成nvd3打造数据可视化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/24/WEB系统前后端分离设计-二-前端部分/" rel="prev" title="WEB系统前后端分离设计(二)--前端部分">
+                WEB系统前后端分离设计(二)--前端部分 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="答案在风中" />
+          <p class="site-author-name" itemprop="name">答案在风中</p>
+           
+              <p class="site-description motion-element" itemprop="description">匠心</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/TimGuan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Smart-Table"><span class="nav-number">1.</span> <span class="nav-text">Smart-Table</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础依赖"><span class="nav-number">2.</span> <span class="nav-text">基础依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#smart-table使用"><span class="nav-number">3.</span> <span class="nav-text">smart-table使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模板"><span class="nav-number">3.1.</span> <span class="nav-text">模板</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础使用"><span class="nav-number">3.1.1.</span> <span class="nav-text">基础使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分页"><span class="nav-number">3.1.2.</span> <span class="nav-text">分页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#终端适配"><span class="nav-number">3.1.3.</span> <span class="nav-text">终端适配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bootstrap-table"><span class="nav-number">3.1.4.</span> <span class="nav-text">bootstrap table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#filter-search"><span class="nav-number">3.1.5.</span> <span class="nav-text">filter search</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整模板"><span class="nav-number">3.1.6.</span> <span class="nav-text">完整模板</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据获取"><span class="nav-number">3.2.</span> <span class="nav-text">数据获取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据初始化及分页"><span class="nav-number">3.2.1.</span> <span class="nav-text">数据初始化及分页</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">答案在风中</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "53d1ac2e2c33440383226e439c20a1aa",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("BT7aC5Gv8NiE4fa0r2KGORyl-gzGzoHsz", "WAsHCn555Qb2MF2XyHWvfHGx");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
